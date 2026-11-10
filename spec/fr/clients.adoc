@@ -19,7 +19,7 @@ Un seul flux pour chaque client est plus simple à construire, à tester et à r
 *IAM-021.* Une application frontale DOIT employer un serveur dorsal dédié (BFF), comme le décrit le link:https://www.rfc-editor.org/info/rfc10017[RFC 10017].
 Ce serveur dorsal est le client OAuth, et il DOIT garder chaque jeton sur le serveur.
 Le code du navigateur NE DOIT PAS recevoir de {term-access-token}, de jeton d'actualisation ou de jeton d'identité, ni en stocker.
-Le navigateur DOIT seulement détenir un témoin de session marqué `Secure` et `HttpOnly`, qui DEVRAIT porter `SameSite=Strict`.
+Le navigateur DOIT seulement détenir un témoin de connexion (cookie) marqué `Secure` et `HttpOnly`, qui DEVRAIT porter `SameSite=Strict`.
 Le serveur dorsal DOIT bloquer les requêtes falsifiées venues d'autres sites, avec une défense du même RFC.
 Un script qui s'exécute dans la page peut voler tout jeton que la page peut lire.
 

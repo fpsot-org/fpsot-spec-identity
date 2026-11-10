@@ -30,6 +30,8 @@ CITED = re.compile(r"https://fpsot\.org/(?:fr/)?problems/identity/([A-Za-z0-9-]+
 TABLE_ROW = re.compile(r"^\|`([a-z0-9-]+)` \|([0-9]{3}) \|(?:`([a-z_]+)`|(None|Aucune)) \|")
 EVENT = re.compile(r"\borg\.fpsot\.identity\.[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*\b")
 EVENT_ROW = re.compile(r"^\|`(org\.fpsot\.identity\.[a-z0-9.-]+)` \|")
+# A row of the IAM-094 attribute table: a plain-text field, then the attribute names in code.
+ATTR_ROW = re.compile(r"^\|[^`|][^|]*\|`org\.fpsot\.")
 DRAFT = "https://json-schema.org/draft/2020-12/schema"
 
 
@@ -103,6 +105,7 @@ def check_events(root: pathlib.Path) -> list[str]:
     out: list[str] = []
     folder = root / "registry" / "events"
     catalog: set[str] = set()
+    attributes: set[str] = set()
     for lang in ("en", "fr"):
         page = root / "spec" / lang / "events.adoc"
         if not page.exists():
@@ -115,11 +118,13 @@ def check_events(root: pathlib.Path) -> list[str]:
         if catalog and rows != catalog:
             out.append(f"{page}: the event catalog differs from the English one")
         catalog |= rows
+        attributes |= {m.group(0) for line in page.read_text(encoding="utf-8").splitlines()
+                       if ATTR_ROW.match(line) for m in EVENT.finditer(line)}
     for sub in ("spec", "docs"):
         for page in sorted((root / sub).rglob("*.adoc")):
             for n, line in enumerate(page.read_text(encoding="utf-8").splitlines(), 1):
                 for m in EVENT.finditer(line):
-                    if m.group(0) not in catalog:
+                    if m.group(0) not in catalog and m.group(0) not in attributes:
                         out.append(f"{page}:{n}: event type {m.group(0)!r} is not in the catalog table")
     ids: dict[str, str] = {}
     files = {p.name: p for p in folder.glob("*.schema.json")} if folder.is_dir() else {}

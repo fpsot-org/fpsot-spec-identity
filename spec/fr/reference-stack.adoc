@@ -49,7 +49,7 @@ node "API\n(Quarkus, mode service)" as API
 node "Fournisseur d'identité\n(Keycloak)" as IDP
 node "Moteur d'autorisation\n(Topaz)" as PDP
 Personne --> B
-B --> BFF : témoin de session
+B --> BFF : témoin de connexion
 BFF --> IDP : OpenID Connect, flux par code
 BFF --> API : jeton d'accès lié par DPoP
 API --> PDP : évaluation AuthZEN

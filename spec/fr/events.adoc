@@ -48,7 +48,7 @@ Après un échange de jetons, il DOIT nommer chaque acteur de la chaîne `act`.
 Un événement sur un travail délégué qui nomme une seule partie ne peut pas montrer qui est responsable.
 
 L'identifiant de session DOIT être une valeur opaque distincte, comme le `sid` d'OpenID Connect ou une empreinte à clé.
-Il NE DOIT PAS être la valeur du témoin de session d'IAM-041.
+Il NE DOIT PAS être la valeur du témoin de connexion d'IAM-041.
 Sinon, toute personne qui lit le journal pourrait prendre le contrôle de la session.
 
 [[IAM-092]]
@@ -69,6 +69,7 @@ Les enregistrements d'audit survivent aux sessions qu'ils décrivent, et chaque 
 Pour la revue de sécurité, trois événements d'identité ont besoin de l'adresse réseau complète du client.
 Ce sont `authentication.failed`, `authentication.succeeded` et `account.suspended`.
 Cette liste alimente les règles de minimisation de la spécification sur l'observabilité.
+Ces événements gardent l'adresse complète seulement si l'évaluation des facteurs relatifs à la vie privée les nomme.
 
 [[IAM-094]]
 *IAM-094.* Les données de chaque type d'événement DOIVENT suivre leur schéma {abbr-json-first} Schema 2020-12, publié dans `registry/events/<type>.schema.json` comme l'exige API-103.
@@ -79,6 +80,21 @@ Les machines lisent alors les événements dans toute langue, et les personnes v
 
 La spécification FPSOT sur l'observabilité nomme les attributs de l'enregistrement, comme l'heure et l'identifiant de trace.
 Cette spécification fixe seulement les champs des données de l'événement, et ne définit pas ces noms.
+
+Quand un enregistrement porte les champs communs d'IAM-091 comme attributs, il DOIT employer ces noms.
+Un seul nom par champ permet à une requête de trouver un acteur ou une session dans tous les produits.
+
+[cols="1,2",options="header"]
+|===
+|Champ d'IAM-091 |Attribut de l'enregistrement
+|Acteur |`org.fpsot.actor.id`, `org.fpsot.actor.type`, `org.fpsot.actor.role`
+|Client |`org.fpsot.identity.client.id`
+|Session |`org.fpsot.identity.session.id`
+|Niveau |`org.fpsot.identity.assurance.level`
+|Partie représentée |`org.fpsot.identity.represented_party.id`
+|Chaîne `act` |`org.fpsot.identity.act_chain`, une liste d'identifiants opaques
+|Résultat |`org.fpsot.outcome`
+|===
 
 [[IAM-095]]
 *IAM-095.* Un événement `session.ended` DOIT donner un de ces motifs : `sign-out`, `idle-limit`, `overall-limit`, `assurance-dropped`, `revoked` ou `account-suspended`.

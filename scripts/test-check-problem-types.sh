@@ -41,4 +41,5 @@ case_fails event-schema-unparsable 'open("registry/events/org.fpsot.identity.ses
 case_fails event-schema-duplicate-id 'import json;a="registry/events/org.fpsot.identity.session.ended.schema.json";b="registry/events/org.fpsot.identity.account.created.schema.json";d=json.load(open(b));d["$id"]=json.load(open(a))["$id"];json.dump(d,open(b,"w"))'
 case_fails event-type-not-in-table 'open("spec/en/events.adoc","a").write("\nSee `org.fpsot.identity.no.such`.\n")'
 case_fails event-schema-wrong-draft 'import json;p="registry/events/org.fpsot.identity.token.exchanged.schema.json";d=json.load(open(p));d["$schema"]="http://json-schema.org/draft-07/schema#";json.dump(d,open(p,"w"))'
+case_fails attribute-name-misspelled 'open("spec/en/events.adoc","a").write("\nSee `org.fpsot.identity.session.ident`.\n")'
 exit $fail

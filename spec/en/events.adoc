@@ -69,6 +69,7 @@ Audit records outlive the sessions they describe, so each secret or personal det
 For security review, three identity events need the full network address of the client.
 They are `authentication.failed`, `authentication.succeeded` and `account.suspended`.
 This list is an input to the minimization rules of the observability specification.
+They keep the full address only when the privacy impact assessment names them.
 
 [[IAM-094]]
 *IAM-094.* The data of each event type MUST follow its {abbr-json-first} Schema 2020-12, published in `registry/events/<type>.schema.json` as API-103 requires.
@@ -79,6 +80,21 @@ Machines then read the events in any language, and people see labels in theirs.
 
 The FPSOT observability specification names the attributes of the record, such as the time and the trace identifier.
 This specification sets only the fields of the event data, and does not define those names.
+
+When a record carries the common fields of IAM-091 as attributes, it MUST use these names.
+One name for each field lets one query find an actor or a session across every product.
+
+[cols="1,2",options="header"]
+|===
+|Field of IAM-091 |Record attribute
+|Actor |`org.fpsot.actor.id`, `org.fpsot.actor.type`, `org.fpsot.actor.role`
+|Client |`org.fpsot.identity.client.id`
+|Session |`org.fpsot.identity.session.id`
+|Level |`org.fpsot.identity.assurance.level`
+|Represented party |`org.fpsot.identity.represented_party.id`
+|`act` chain |`org.fpsot.identity.act_chain`, a list of opaque identifiers
+|Outcome |`org.fpsot.outcome`
+|===
 
 [[IAM-095]]
 *IAM-095.* A `session.ended` event MUST give one of these reasons: `sign-out`, `idle-limit`, `overall-limit`, `assurance-dropped`, `revoked` or `account-suspended`.
