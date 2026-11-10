@@ -21,7 +21,7 @@ A workload that gets its own token MUST use the client credentials grant with `p
 A call inside one network still crosses a trust boundary, since an attacker inside can reach every service.
 
 [[IAM-072]]
-*IAM-072.* A service MUST NOT pass the {term-access-token} of a person on to another {abbr-api-first}.
+*IAM-072.* A service MUST NOT forward a token it received, such as the {term-access-token} of a person, to another {abbr-api-first}.
 When the next service needs to know the person, the first service MUST exchange the token under IAM-065.
 A token sent onward reaches an audience it was not made for, and that audience can then replay it.
 

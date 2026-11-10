@@ -16,8 +16,8 @@ Une version mineure PEUT ajouter un type, selon NAM-081.
 [cols="3,2,3",options="header"]
 |===
 |Type |Émis par |Quand
-|`org.fpsot.identity.authentication.succeeded` |Fournisseur d'identité |Une personne ou une charge de travail se connecte, ou renforce son authentification.
-|`org.fpsot.identity.authentication.failed` |Fournisseur d'identité |Une connexion ou une authentification renforcée échoue.
+|`org.fpsot.identity.authentication.succeeded` |Fournisseur d'identité |Une personne ou une charge de travail se connecte, ou termine un rehaussement de l'authentification.
+|`org.fpsot.identity.authentication.failed` |Fournisseur d'identité |Une connexion ou un rehaussement de l'authentification échoue.
 |`org.fpsot.identity.session.ended` |Fournisseur d'identité ou application |Une session prend fin, avec le motif selon IAM-095.
 |`org.fpsot.identity.authenticator.enrolled` |Fournisseur d'identité |Une personne ajoute un authentifiant.
 |`org.fpsot.identity.authenticator.removed` |Fournisseur d'identité |Une personne ou un ou une responsable de l'administration retire un authentifiant.
@@ -47,27 +47,38 @@ Quand une personne agit pour une autre, l'événement DOIT aussi nommer la parti
 Après un échange de jetons, il DOIT nommer chaque acteur de la chaîne `act`.
 Un événement sur un travail délégué qui nomme une seule partie ne peut pas montrer qui est responsable.
 
+L'identifiant de session DOIT être une valeur opaque distincte, comme le `sid` d'OpenID Connect ou une empreinte à clé.
+Il NE DOIT PAS être la valeur du témoin de session d'IAM-041.
+Sinon, toute personne qui lit le journal pourrait prendre le contrôle de la session.
+
 [[IAM-092]]
 *IAM-092.* Chaque événement `access.evaluated` DOIT contenir le sujet, l'action et la ressource, par type et identifiant opaque.
 Il DOIT aussi contenir la décision, la version de la politique selon IAM-053 et l'identifiant du moteur.
-Il DOIT contenir une empreinte du contexte de la requête, et non le contexte lui-même.
+Il DOIT contenir une empreinte à clé (HMAC) du contexte de la requête, et non le contexte lui-même.
 Chaque décision DOIT produire un événement, qu'elle permette ou refuse.
 Les décisions montrent les raisons d'un accès, qu'aucun autre enregistrement ne contient.
+Une simple empreinte d'un petit contexte se devine, alors qu'une empreinte à clé résiste sans la clé.
 
 [[IAM-093]]
-*IAM-093.* Un événement NE DOIT PAS contenir de mot de passe, de code, de jeton, de témoin ou de clé.
+*IAM-093.* Un événement NE DOIT PAS contenir de mot de passe, code, jeton, assertion de client, témoin ou clé.
 Il NE DOIT PAS contenir de nom, de courriel, de date de naissance, ni de numéro qui identifie une personne.
 Il DOIT nommer les personnes seulement par des identifiants opaques, comme le `sub` d'IAM-036.
-Un événement DOIT garder seulement les 24 premiers bits d'une adresse IPv4, ou 48 bits d'une adresse IPv6.
-Un événement `authentication.failed` ou `account.suspended` PEUT contenir l'adresse complète, pour détecter les attaques.
+La spécification FPSOT sur l'observabilité fixe comment un enregistrement réduit les adresses réseau, et cette spécification ne le répète pas.
 Les enregistrements d'audit survivent aux sessions qu'ils décrivent, et chaque secret ou détail personnel y reste exposé pendant des années.
 
+Pour la revue de sécurité, trois événements d'identité ont besoin de l'adresse réseau complète du client.
+Ce sont `authentication.failed`, `authentication.succeeded` et `account.suspended`.
+Cette liste alimente les règles de minimisation de la spécification sur l'observabilité.
+
 [[IAM-094]]
-*IAM-094.* Les données de chaque type d'événement DOIVENT suivre un schéma {abbr-json-first} Schema publié, comme l'exige API-103.
+*IAM-094.* Les données de chaque type d'événement DOIVENT suivre leur schéma {abbr-json-first} Schema 2020-12, publié dans `registry/events/<type>.schema.json` comme l'exige API-103.
 Leurs noms de champs DOIVENT suivre NAM-010, comme `representedPartyId`.
 Leur résultat et leur motif DOIVENT être des valeurs de liste de codes selon NAM-060.
 Chaque valeur a des libellés en français et en anglais selon NAM-061.
 Les machines lisent alors les événements dans toute langue, et les personnes voient les libellés dans la leur.
+
+La spécification FPSOT sur l'observabilité nomme les attributs de l'enregistrement, comme l'heure et l'identifiant de trace.
+Cette spécification fixe seulement les champs des données de l'événement, et ne définit pas ces noms.
 
 [[IAM-095]]
 *IAM-095.* Un événement `session.ended` DOIT donner un de ces motifs : `sign-out`, `idle-limit`, `overall-limit`, `assurance-dropped`, `revoked` ou `account-suspended`.

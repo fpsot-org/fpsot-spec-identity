@@ -22,12 +22,17 @@ An organization MAY set shorter limits.
 
 A person at a public counter or on a shared computer needs the shorter limits of staff.
 Longer limits for the public spare people from signing in again on their own devices.
+At the `high` level, a session of the public gets 12 hours overall and 15 minutes idle.
+These are the limits of AAL3 in NIST SP 800-63B-4, the level that `high` maps to under IAM-003.
+
+In Québec, article 36 of the instruction IA-SI-2022-001-OP recommends 8 hours overall and 30 minutes idle.
+Those values are stricter than the limits for the public, and an organization can adopt them under this rule.
 
 [[IAM-041]]
 *IAM-041.* When a session ends, the person MUST sign in again at the level of the service.
 The backend of a browser front end MUST then drop the tokens of the session.
 The authorization server MUST revoke its refresh tokens.
-The application MUST create a new session identifier at each sign-in and at each step up.
+The application MUST create a new session identifier at each sign-in and at each step-up.
 A session identifier MUST be random, with at least 128 bits of entropy.
 A fixed identifier lets an attacker plant a session before the person signs in.
 
@@ -44,9 +49,9 @@ A person who signs out on a shared computer expects every service to sign out.
 [[IAM-043]]
 *IAM-043.* A session MUST keep the assurance level of the service for its whole life.
 When the level falls below the level of the service, the application MUST end the session.
-It MAY instead require a step up before the next action.
+It MAY instead require a step-up before the next action.
 The level falls when the person removes the authenticator of the sign-in, or when the account loses its verification.
-The Québec rules require that a session end when its level falls below the required level.
+This option does not apply where the jurisdiction requires the session to end, as Québec does in article 25.
 
 [[IAM-044]]
 *IAM-044.* A service SHOULD show each person a list of their active sessions.
@@ -64,6 +69,7 @@ People often spot a stolen account first through a session they do not know.
 
 === Informative
 
+* Indication d'application IA-SI-2022-001-OP, Niveaux d'assurance de l'identité, Gouvernement du Québec, Chief Government Information Security Officer, 2022-10-04. No archived copy exists. The PDF is at `https://www.cyber.gouv.qc.ca/publications/IA-SI-2022-001-OP_NiveauxAssurIdentite.pdf`.
 * link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Government of Canada Guideline on Multi-Factor Authentication: Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain], Treasury Board of Canada Secretariat. link:https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Archived copy]
 * link:https://openid.net/specs/openid-caep-1_0-final.html[OpenID Continuous Access Evaluation Profile 1.0], OpenID Foundation, Final, 2025-08-29. link:https://web.archive.org/web/20261006112628/https://openid.net/specs/openid-caep-1_0-final.html[Archived copy]
 

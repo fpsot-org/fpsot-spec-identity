@@ -22,6 +22,11 @@ Avec Web Authentication, il DOIT vérifier que l'indicateur d'admissibilité à 
 Une clé d'accès synchronisée PEUT servir de facteur résistant à l'hameçonnage aux niveaux `low` et `substantial` pour le public.
 Une clé synchronisée réside dans un compte infonuagique, et sa sûreté dépend donc de ce compte.
 
+L'authentifiant fixe lui-même cet indicateur, et l'indicateur seul ne prouve donc rien.
+Au niveau `high`, le fournisseur d'identité DOIT aussi vérifier l'attestation de chaque nouvel authentifiant.
+Il DOIT la comparer à une source de métadonnées fiable, ou à une liste de clés remises par l'organisation.
+Le link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4] exige qu'un fournisseur connaisse les caractéristiques de chaque authentifiant qu'il associe, par exemple par une attestation.
+
 [[IAM-012]]
 *IAM-012.* Le personnel DOIT se connecter avec une authentification multifacteur résistante à l'hameçonnage.
 Les responsables de l'administration du fournisseur d'identité, du {term-authorization-engine} et de leurs clés DOIVENT employer le niveau `high`.
@@ -43,6 +48,10 @@ Le fournisseur d'identité DOIT accepter au moins 64 caractères et le collage d
 Il DOIT comparer chaque nouveau mot de passe à une liste de mots de passe divulgués et courants.
 Il NE DOIT PAS imposer de règles de composition ni de changement périodique, ni employer de questions secrètes ou d'indices.
 Les changements forcés et les règles de composition mènent à des mots de passe plus faibles et prévisibles.
+
+Le fournisseur DOIT conserver chaque mot de passe salé et haché, selon la section 3.1.1.2.
+Il DOIT permettre au plus 100 échecs de suite sur un même compte, selon la section 3.2.2.
+Le hachage salé ralentit une attaque qui vole la base, et la limite bloque les essais en ligne.
 
 [[IAM-015]]
 *IAM-015.* Un code transmis par SMS ou par appel vocal NE DEVRAIT PAS servir de facteur.

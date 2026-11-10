@@ -28,8 +28,10 @@ jobs:
       doc-rules: true
   registry:
     # Checks registry/problem-types.json: unique type URIs, titles in English and French,
-    # and every problem type that the specification cites (IAM-101). Then checks that
-    # broken copies of the file fail.
+    # status and OAuth error equal to the table, and every problem type that the
+    # specification cites (IAM-101). Checks registry/events/: one JSON Schema 2020-12 per
+    # event type of the catalog, each parsable, with a unique $id (IAM-094). Then checks
+    # that broken copies of the files fail.
     if: github.ref_type != 'tag'
     runs-on: ubuntu-latest
     steps:

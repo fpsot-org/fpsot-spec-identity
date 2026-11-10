@@ -9,23 +9,27 @@ API-090 l'exige déjà pour chaque {abbr-api-first}.
 == Le flux de connexion
 
 [[IAM-020]]
-*IAM-020.* Une application DOIT connecter les personnes avec le flux par code d'autorisation d'OpenID Connect Core 1.0.
-Chaque client DOIT employer le défi de code du link:https://www.rfc-editor.org/info/rfc7636[RFC 7636] avec la méthode `S256`, même un client confidentiel.
+*IAM-020.* Une application DOIT connecter les personnes avec le flux par code d'autorisation d'link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0].
+Chaque client DOIT employer le défi de code (PKCE) du link:https://www.rfc-editor.org/info/rfc7636[RFC 7636] avec la méthode `S256`, même un client confidentiel.
 Un client NE DOIT PAS employer le flux implicite, l'octroi par mot de passe ou un flux hybride à jetons.
 Le client DOIT lire les paramètres du {term-identity-provider} dans son document de découverte, selon link:https://openid.net/specs/openid-connect-discovery-1_0.html[OpenID Connect Discovery 1.0].
 Un seul flux pour chaque client est plus simple à construire, à tester et à revoir.
 
 [[IAM-021]]
-*IAM-021.* Une interface Web DOIT employer un serveur dorsal dédié, comme le décrit le link:https://www.rfc-editor.org/info/rfc10017[RFC 10017].
+*IAM-021.* Une application frontale DOIT employer un serveur dorsal dédié (BFF), comme le décrit le link:https://www.rfc-editor.org/info/rfc10017[RFC 10017].
 Ce serveur dorsal est le client OAuth, et il DOIT garder chaque jeton sur le serveur.
 Le code du navigateur NE DOIT PAS recevoir de {term-access-token}, de jeton d'actualisation ou de jeton d'identité, ni en stocker.
 Le navigateur DOIT seulement détenir un témoin de session marqué `Secure` et `HttpOnly`, qui DEVRAIT porter `SameSite=Strict`.
 Le serveur dorsal DOIT bloquer les requêtes falsifiées venues d'autres sites, avec une défense du même RFC.
 Un script qui s'exécute dans la page peut voler tout jeton que la page peut lire.
 
+Le nom de ce témoin DEVRAIT commencer par `__Host-Http-`, selon la section 6.1.3.2 du même RFC.
+Le préfixe empêche les autres sous-domaines de créer ou de remplacer le témoin.
+
 [[IAM-022]]
 *IAM-022.* Le serveur d'autorisation DOIT comparer chaque adresse de redirection à la valeur inscrite, par égalité exacte des chaînes.
 Il DOIT accepter seulement des adresses de redirection `https`, sauf une adresse de bouclage pour une application native.
+Seul son port PEUT varier, selon la section 7.3 du link:https://www.rfc-editor.org/info/rfc8252[RFC 8252] et la section 2.1 du link:https://www.rfc-editor.org/info/rfc9700[RFC 9700].
 Il DOIT envoyer le paramètre `iss` du link:https://www.rfc-editor.org/info/rfc9207[RFC 9207] dans chaque réponse d'autorisation.
 Le client DOIT vérifier que `iss` correspond à l'émetteur qu'il a appelé, et DOIT rejeter la réponse sinon.
 Une comparaison lâche des redirections et une confusion d'émetteurs sont les façons classiques de voler un code d'autorisation.
@@ -51,20 +55,23 @@ Une personne qui a choisi le français dans l'application s'attend aussi au fran
 Ces méthodes suivent le link:https://www.rfc-editor.org/info/rfc7523[RFC 7523], que met à jour le link:https://www.rfc-editor.org/info/rfc10070[RFC 10070], et le link:https://www.rfc-editor.org/info/rfc8705[RFC 8705].
 Le `aud` de l'assertion du client DOIT être l'identifiant d'émetteur du serveur d'autorisation, comme seule valeur.
 Le serveur d'autorisation DOIT rejeter une assertion avec tout autre public, comme l'adresse de son point de terminaison de jeton.
+
 Un client de niveau `substantial` ou `high` NE DOIT PAS employer un secret partagé, et les autres NE DEVRAIENT PAS.
+La méthode `client_secret_jwt` compte comme un secret partagé, car elle signe l'assertion avec ce secret.
 Un secret partagé se trouve aux deux bouts, et une fuite permet à quiconque d'agir comme le client.
 
 [[IAM-026]]
 *IAM-026.* Au niveau `high`, le serveur d'autorisation DOIT lier chaque jeton d'accès à une clé que détient le client.
-Une interface Web et son serveur dorsal DOIVENT employer DPoP, la preuve de clé du link:https://www.rfc-editor.org/info/rfc9449[RFC 9449].
+Une application frontale et son serveur dorsal DOIVENT employer DPoP, la preuve de clé du link:https://www.rfc-editor.org/info/rfc9449[RFC 9449].
 Un appel d'un service à un autre DOIT employer des jetons liés au certificat d'une connexion {abbr-tls} mutuelle.
 Au niveau `substantial`, le serveur d'autorisation DEVRAIT lier les jetons de la même façon.
 Une personne qui vole un jeton lié ne peut pas s'en servir sans sa clé.
 
 [[IAM-027]]
 *IAM-027.* Au niveau `high`, le serveur d'autorisation, ses clients et ses API DOIVENT respecter le link:https://openid.net/specs/fapi-security-profile-2_0-final.html[FAPI 2.0 Security Profile].
-Ce profil exige entre autres les demandes d'autorisation poussées, le défi de code et les jetons liés.
-Aux autres niveaux, un client Web confidentiel DEVRAIT employer les demandes d'autorisation poussées du link:https://www.rfc-editor.org/info/rfc9126[RFC 9126].
+Ce profil exige entre autres les demandes d'autorisation transmises au préalable (PAR), le défi de code et les jetons liés.
+Il permet seulement des clients confidentiels, et une application native ou frontale DOIT donc passer par un serveur dorsal.
+Aux autres niveaux, un client Web confidentiel DEVRAIT employer les demandes d'autorisation transmises au préalable du link:https://www.rfc-editor.org/info/rfc9126[RFC 9126].
 FAPI 2.0 a un modèle formel de l'attaquant et une suite de tests ouverte, que cette règle apporte.
 
 [[IAM-028]]
@@ -84,6 +91,7 @@ Une inscription fixe limite ce que permet une identité de client volée.
 * link:https://www.rfc-editor.org/info/rfc9700[RFC 9700, Best Current Practice for OAuth 2.0 Security], IETF, BCP 240, 2025-01. link:https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc7636[RFC 7636, Proof Key for Code Exchange by OAuth Public Clients], IETF, 2015-09. link:https://web.archive.org/web/20261102230719/https://www.rfc-editor.org/info/rfc7636/[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc10017[RFC 10017, OAuth 2.0 for Browser-Based Applications], IETF, Best Current Practice, 2026-08. link:https://web.archive.org/web/20261101224723/https://www.rfc-editor.org/info/rfc10017/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc8252[RFC 8252, OAuth 2.0 for Native Apps], IETF, BCP 212, 2017-10. link:https://web.archive.org/web/20261102074801/https://www.rfc-editor.org/info/rfc8252/[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc9207[RFC 9207, OAuth 2.0 Authorization Server Issuer Identification], IETF, 2022-03. link:https://web.archive.org/web/20261005125737/https://www.rfc-editor.org/info/rfc9207/[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc7523[RFC 7523, JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants], IETF, 2015-05. link:https://web.archive.org/web/20261024144505/https://www.rfc-editor.org/info/rfc7523/[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc10070[RFC 10070, Updates to OAuth 2.0 JSON Web Token (JWT) Client Authentication and Assertion-Based Authorization Grants], IETF, 2026-11. link:https://web.archive.org/web/20260516092522/https://datatracker.ietf.org/doc/draft-ietf-oauth-rfc7523bis/[Copie archivée de draft-ietf-oauth-rfc7523bis, avant la publication]

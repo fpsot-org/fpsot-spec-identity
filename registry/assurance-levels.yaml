@@ -16,7 +16,7 @@ levels:
     acr: https://fpsot.org/assurance-levels/substantial
     label: {en: Substantial, fr: Substantiel}
     mappings:
-      ca-qc: {value: "ID2 and AU2, or ID3 and AU3", verified: true, note: {en: "At ID3, the instruction IA-SI-2022-001-OP bans one-time codes sent by text message, voice, fax, email or mail, and the Règles renew evidence every 18 months.", fr: "Au niveau ID3, l'indication IA-SI-2022-001-OP interdit les codes à usage unique transmis par SMS, appel vocal, télécopie, courriel ou courrier, et les Règles renouvellent les preuves tous les 18 mois."}}
+      ca-qc: {value: "ID2 and AU2, or ID3 and AU3", verified: true, note: {en: "At ID3, the instruction IA-SI-2022-001-OP bans one-time codes sent by text message, voice, fax, email or mail, and the Règles renew evidence every 18 months (art. 26). The link from the instruction's level élevé to ID3 is inferred: the instruction does not state it. The Québec level élevé (ID3) maps to FPSOT substantial, not high.", fr: "Au niveau ID3, l'indication IA-SI-2022-001-OP interdit les codes à usage unique transmis par SMS, appel vocal, télécopie, courriel ou courrier, et les Règles renouvellent les preuves tous les 18 mois (art. 26). Le lien entre le niveau élevé de l'indication et ID3 est déduit : l'indication ne l'énonce pas. Le niveau élevé du Québec (ID3) correspond au niveau FPSOT substantiel, et non au niveau FPSOT élevé."}}
       ca: {value: "Credential LoA 3", verified: true, note: {en: "The federal guideline on multifactor authentication equates LoA 3 with NIST AAL2.", fr: "La ligne directrice fédérale sur l'authentification multifacteur fait correspondre le niveau 3 au niveau AAL2 du NIST."}}
       pctf: {value: "LOA3", verified: false}
       eidas: {value: "substantial", verified: false}
@@ -25,7 +25,7 @@ levels:
     acr: https://fpsot.org/assurance-levels/high
     label: {en: High, fr: Élevé}
     mappings:
-      ca-qc: {value: "ID4 and AU4", verified: true, note: {en: "AU4 requires at least one hardware cryptographic device. A body may also choose high for an ID3 service.", fr: "Le niveau AU4 exige au moins un dispositif cryptographique matériel. Un organisme peut aussi choisir le niveau élevé pour un service ID3."}}
+      ca-qc: {value: "ID4 and AU4", verified: true, note: {en: "AU4 requires at least one hardware cryptographic device. A body may also choose high for an ID3 service.", fr: "Le niveau AU4 exige au moins un dispositif cryptographique matériel. Un organisme peut aussi choisir le niveau FPSOT élevé pour un service ID3."}}
       ca: {value: "Credential LoA 4", verified: true, note: {en: "The federal guideline equates LoA 4 with NIST AAL3 and refuses synced passkeys there.", fr: "La ligne directrice fédérale fait correspondre le niveau 4 au niveau AAL3 du NIST et y refuse les clés d'accès synchronisées."}}
       pctf: {value: "LOA4", verified: false}
       eidas: {value: "high", verified: false}

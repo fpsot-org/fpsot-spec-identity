@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fpsot.org/schemas/identity/events/org.fpsot.identity.authenticator.enrolled.schema.json",
+  "$comment": "SPDX-License-Identifier: Community-Spec-1.0. FPSOT identity and access event data (IAM-090 to IAM-095). The record attributes, such as the time, the event name and the trace identifier, are set by the FPSOT observability specification.",
+  "title": "org.fpsot.identity.authenticator.enrolled",
+  "description": "A person adds an authenticator.",
+  "type": "object",
+  "properties": {
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure"
+      ],
+      "description": "The outcome, a code list value (NAM-060)."
+    },
+    "actorId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "The opaque identifier of the person or workload that acts, such as the sub of IAM-036."
+    },
+    "clientId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "The identifier of the OAuth client."
+    },
+    "sessionId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "An opaque session identifier, such as the OpenID Connect sid or a keyed hash. It is never the value of the session cookie (IAM-091)."
+    },
+    "assuranceLevel": {
+      "type": "string",
+      "enum": [
+        "https://fpsot.org/assurance-levels/low",
+        "https://fpsot.org/assurance-levels/substantial",
+        "https://fpsot.org/assurance-levels/high"
+      ],
+      "description": "The FPSOT level of the session, under IAM-002."
+    },
+    "representedPartyId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "description": "The party that the person acts for, under IAM-064."
+    },
+    "actChain": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 255,
+        "description": "An opaque identifier. It is never a name, an email address or a number that identifies a person (IAM-093)."
+      },
+      "minItems": 1,
+      "description": "Each actor of the act chain after a token exchange, outermost first (IAM-091)."
+    },
+    "authenticatorKind": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "description": "The kind of authenticator, a code list value such as passkey."
+    }
+  },
+  "required": [
+    "outcome"
+  ],
+  "additionalProperties": false
+}

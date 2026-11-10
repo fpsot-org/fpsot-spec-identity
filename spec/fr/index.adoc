@@ -26,11 +26,13 @@ Les règles comportent onze parties, suivies de deux pages informatives.
 
 == Fichiers du registre
 
-Le dossier `registry/` contient deux fichiers de données que citent les règles.
+Le dossier `registry/` contient les fichiers de données que citent les règles.
 
 * `assurance-levels.yaml` fait correspondre les niveaux {abbr-fpsot} aux niveaux d'autres cadres, selon IAM-003.
 * `problem-types.json` énumère les types de problèmes d'IAM-101, avec leurs titres en français et en anglais.
-Un test de l'intégration continue compare le second fichier au texte de la spécification.
+* `events/<type>.schema.json` contient le schéma {abbr-json-first} Schema de chaque type d'événement d'IAM-090, selon IAM-094.
+
+Un test de l'intégration continue compare les types de problèmes et les schémas d'événements au texte de la spécification.
 
 == Spécifications liées
 
@@ -70,7 +72,7 @@ La page xref:questions-for-counsel.adoc[Questions pour le conseiller juridique] 
 == Normes
 
 Les règles résument les normes externes dans leurs propres mots et n'en reprennent aucun texte.
-Les principales sont OpenID Connect Core 1.0, la pratique exemplaire de sécurité d'OAuth, FAPI 2.0 et Web Authentication Level 3.
+Les principales sont link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0], la pratique exemplaire de sécurité d'OAuth, FAPI 2.0 et Web Authentication Level 3.
 Les autres sont OpenID AuthZEN Authorization API 1.0 et le {abbr-nist-first} SP 800-63-4.
 Chaque page énumère les versions qu'elle cite.
 
@@ -84,6 +86,7 @@ Une version ultérieure citera OAuth 2.1 quand il deviendra un RFC.
 
 * link:https://www.rfc-editor.org/info/rfc2119[RFC 2119, Key words for use in RFCs to Indicate Requirement Levels], IETF, BCP 14, 1997-03. link:https://web.archive.org/web/20261103005705/https://www.rfc-editor.org/info/rfc2119/[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc8174[RFC 8174, Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words], IETF, BCP 14, 2017-05. link:https://web.archive.org/web/20261103005743/https://www.rfc-editor.org/info/rfc8174/[Copie archivée]
+* link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0 incorporating errata set 2], OpenID Foundation, Final, 2023-12-15. Also published as ISO/IEC 26131:2024. link:https://web.archive.org/web/20261023004717/https://openid.net/specs/openid-connect-core-1_0.html[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc9700[RFC 9700, Best Current Practice for OAuth 2.0 Security], IETF, BCP 240, 2025-01. link:https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/[Copie archivée]
 
 === Références informatives

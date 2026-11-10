@@ -7,16 +7,17 @@ They also set when a service may trust an outside {term-identity-provider}.
 == Provisioning
 
 [[IAM-080]]
-*IAM-080.* An application MUST either read accounts only from tokens, or keep a local copy that the identity provider feeds.
-An application that keeps a local copy MUST accept provisioning through link:https://www.rfc-editor.org/info/rfc7644[SCIM 2.0], with the schemas of link:https://www.rfc-editor.org/info/rfc7643[RFC 7643].
+*IAM-080.* An application MUST read accounts only from tokens, or keep a local copy that the provider pushes.
+An application that keeps a local copy SHOULD accept provisioning through link:https://www.rfc-editor.org/info/rfc7644[SCIM 2.0], with the schemas of link:https://www.rfc-editor.org/info/rfc7643[RFC 7643].
+It MAY instead receive the changes as events of link:https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html[OpenID Shared Signals Framework 1.0], or through an equivalent push.
 It SHOULD support the cursor-based pages of link:https://www.rfc-editor.org/info/rfc9865[RFC 9865] for large directories.
 A local copy that no one updates keeps the access of people who left.
 
 [[IAM-081]]
 *IAM-081.* When a person leaves, or when the organization suspends an account, the identity provider MUST disable it at once.
 It MUST end its sessions and revoke its refresh tokens.
-Each application with a local copy MUST receive the change within 1 hour.
-The organization SHOULD send the change through SCIM 2.0, or as an event of link:https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html[OpenID Shared Signals Framework 1.0].
+Each application with a local copy MUST receive the change within 1 hour after the identity provider disables the account.
+The change SHOULD travel through SCIM 2.0, or MAY travel by another push that IAM-080 allows.
 A former employee who keeps access is a common cause of breaches.
 
 [[IAM-082]]
@@ -24,13 +25,14 @@ A former employee who keeps access is a common cause of breaches.
 The register MUST record the creation, the suspension, the recovery, the maintenance, the revocation and the renewal of the account.
 The organization MUST review the register at least once a year.
 The events of the page xref:events.adoc[Identity and access events] feed this register.
-The Québec rules require such a register, reviewed each year.
+The link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Québec rules on digital identity assurance] require such a register, reviewed each year, in article 27.
 
 [[IAM-083]]
 *IAM-083.* The identity provider MUST renew the identity evidence of each account every 36 months at the `substantial` level.
 At the `high` level, it MUST renew it at least every 12 months.
 Where the jurisdiction sets a shorter period, such as 18 months for the Québec level ID3, that period applies.
 Without a renewal in time, the account MUST pass identity verification again before it reaches its level.
+These periods follow article 26 of the Québec rules, which sets 36 months at ID2 and 12 months at ID4.
 Evidence ages, and a person's situation changes.
 
 [[IAM-084]]
@@ -49,7 +51,7 @@ The link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encry
 
 [[IAM-086]]
 *IAM-086.* An assertion from an outside identity provider MUST carry a signature and name the service as its only audience.
-It MUST resist replay.
+It MUST resist replay and injection, and MUST answer a request that the service itself made.
 It MUST NOT carry personal information in the identifier of the person.
 These checks match the federation level FAL2 of link:https://pages.nist.gov/800-63-4/sp800-63c.html[NIST SP 800-63C-4].
 A service MUST NOT raise the level of an account when it links an outside identity of a lower level.

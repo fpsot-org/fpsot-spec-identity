@@ -10,7 +10,7 @@ The {abbr-fpsot-first} keeps the list of its identity and access problem types i
 [[IAM-100]]
 *IAM-100.* An {abbr-api-first} that refuses a token MUST send the `WWW-Authenticate` header that OAuth defines.
 The header follows link:https://www.rfc-editor.org/info/rfc6750[RFC 6750] and link:https://www.rfc-editor.org/info/rfc9470[RFC 9470], with the `DPoP` scheme of link:https://www.rfc-editor.org/info/rfc9449[RFC 9449] where it applies.
-It carries the `resource_metadata` parameter of link:https://www.rfc-editor.org/info/rfc9728[RFC 9728].
+It SHOULD carry the `resource_metadata` parameter of link:https://www.rfc-editor.org/info/rfc9728[RFC 9728].
 The response MUST also carry a problem details body, as API-030 requires.
 The body MUST NOT replace the header, and MUST NOT contradict it.
 OAuth clients read the header, while other clients and people read the body.
@@ -44,8 +44,10 @@ They repeat the values of the header, in field names that follow API-037.
 [source,http]
 ----
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer error="insufficient_user_authentication",
-  acr_values="https://fpsot.org/assurance-levels/high"
+WWW-Authenticate: DPoP algs="ES256 PS256 EdDSA",
+  error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high",
+  resource_metadata="https://api.example.org/.well-known/oauth-protected-resource"
 Content-Type: application/problem+json
 Content-Language: en
 

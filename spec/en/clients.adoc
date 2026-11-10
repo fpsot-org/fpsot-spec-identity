@@ -9,7 +9,7 @@ API-090 already requires it at each {abbr-api-first}.
 == The sign-in flow
 
 [[IAM-020]]
-*IAM-020.* An application MUST sign people in with the authorization code flow of OpenID Connect Core 1.0.
+*IAM-020.* An application MUST sign people in with the authorization code flow of link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0].
 Every client MUST use the code challenge of link:https://www.rfc-editor.org/info/rfc7636[RFC 7636] with the method `S256`, even a confidential client.
 A client MUST NOT use the implicit flow, the password grant or a hybrid flow that returns tokens.
 The client MUST read the settings of the {term-identity-provider} from its discovery document, under link:https://openid.net/specs/openid-connect-discovery-1_0.html[OpenID Connect Discovery 1.0].
@@ -23,9 +23,13 @@ The browser MUST hold only a session cookie marked `Secure` and `HttpOnly`, whic
 The backend MUST block forged requests from other sites, with a defense from the same RFC.
 A script that runs in the page can steal any token that the page can read.
 
+The name of that cookie SHOULD start with the prefix `__Host-Http-`, as section 6.1.3.2 of the same RFC advises.
+The prefix keeps other subdomains from setting or replacing the cookie.
+
 [[IAM-022]]
 *IAM-022.* The authorization server MUST compare each redirect URI with the registered value by exact string match.
 It MUST accept only `https` redirect URIs, except a loopback address for a native application.
+Only its port MAY vary, under link:https://www.rfc-editor.org/info/rfc8252[RFC 8252] section 7.3 and link:https://www.rfc-editor.org/info/rfc9700[RFC 9700] section 2.1.
 It MUST send the `iss` parameter of link:https://www.rfc-editor.org/info/rfc9207[RFC 9207] in each authorization response.
 The client MUST check that `iss` matches the issuer it called, and MUST reject the response on a mismatch.
 Loose redirect matching and confused issuers are the classic ways to steal an authorization code.
@@ -51,7 +55,9 @@ A person who chose French in the application expects French on the sign-in page 
 These follow link:https://www.rfc-editor.org/info/rfc7523[RFC 7523], as link:https://www.rfc-editor.org/info/rfc10070[RFC 10070] updates it, and link:https://www.rfc-editor.org/info/rfc8705[RFC 8705].
 The `aud` of the client assertion MUST be the issuer identifier of the authorization server, as its only value.
 The authorization server MUST reject an assertion with any other audience, such as the address of its token endpoint.
+
 A client at the `substantial` or `high` level MUST NOT use a shared client secret, and other clients SHOULD NOT.
+The method `client_secret_jwt` counts as a shared secret, since it signs the assertion with that secret.
 A shared secret sits at both ends, and a leak at either end lets anyone act as the client.
 
 [[IAM-026]]
@@ -64,6 +70,7 @@ A thief cannot use a bound token without its key.
 [[IAM-027]]
 *IAM-027.* At the `high` level, the authorization server, its clients and APIs MUST conform to the link:https://openid.net/specs/fapi-security-profile-2_0-final.html[FAPI 2.0 Security Profile].
 That profile requires pushed authorization requests, the code challenge and bound tokens, among other rules.
+It allows only confidential clients, so a native or browser application MUST use a backend as its client.
 At other levels, a confidential web client SHOULD use the pushed authorization requests of link:https://www.rfc-editor.org/info/rfc9126[RFC 9126].
 FAPI 2.0 has a formal attacker model and an open test suite, so one rule brings both.
 
@@ -84,6 +91,7 @@ A fixed registration limits what a stolen client identity can do.
 * link:https://www.rfc-editor.org/info/rfc9700[RFC 9700, Best Current Practice for OAuth 2.0 Security], IETF, BCP 240, 2025-01. link:https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/[Archived copy]
 * link:https://www.rfc-editor.org/info/rfc7636[RFC 7636, Proof Key for Code Exchange by OAuth Public Clients], IETF, 2015-09. link:https://web.archive.org/web/20261102230719/https://www.rfc-editor.org/info/rfc7636/[Archived copy]
 * link:https://www.rfc-editor.org/info/rfc10017[RFC 10017, OAuth 2.0 for Browser-Based Applications], IETF, Best Current Practice, 2026-08. link:https://web.archive.org/web/20261101224723/https://www.rfc-editor.org/info/rfc10017/[Archived copy]
+* link:https://www.rfc-editor.org/info/rfc8252[RFC 8252, OAuth 2.0 for Native Apps], IETF, BCP 212, 2017-10. link:https://web.archive.org/web/20261102074801/https://www.rfc-editor.org/info/rfc8252/[Archived copy]
 * link:https://www.rfc-editor.org/info/rfc9207[RFC 9207, OAuth 2.0 Authorization Server Issuer Identification], IETF, 2022-03. link:https://web.archive.org/web/20261005125737/https://www.rfc-editor.org/info/rfc9207/[Archived copy]
 * link:https://www.rfc-editor.org/info/rfc7523[RFC 7523, JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants], IETF, 2015-05. link:https://web.archive.org/web/20261024144505/https://www.rfc-editor.org/info/rfc7523/[Archived copy]
 * link:https://www.rfc-editor.org/info/rfc10070[RFC 10070, Updates to OAuth 2.0 JSON Web Token (JWT) Client Authentication and Assertion-Based Authorization Grants], IETF, 2026-11. link:https://web.archive.org/web/20260516092522/https://datatracker.ietf.org/doc/draft-ietf-oauth-rfc7523bis/[Archived copy of draft-ietf-oauth-rfc7523bis, before publication]

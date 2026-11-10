@@ -5,6 +5,7 @@ This repository holds the FPSOT identity and access specification: assurance lev
 - The normative text is in `spec/en/` and `spec/fr/`. Every rule has an ID such as `IAM-001`.
 - Follow `skill/SKILL.md` when you write or review sign-in, token, session, authorization or identity event code in any FPSOT project. The spec text wins on any difference.
 - `registry/problem-types.json` lists every problem type. Add a type there and in the table of `spec/<lang>/errors.adoc` in the same commit, then run `python3 -I scripts/check-problem-types.py .`.
+- `registry/events/<type>.schema.json` holds the JSON Schema 2020-12 of each event type of `spec/<lang>/events.adoc`. Add a type to both tables and add its schema in the same commit; the same script checks them.
 - `registry/assurance-levels.yaml` maps the levels. Keep `verified: false` until a primary source confirms a mapping.
 - Every page exists in English and in French, with the same file name and the same IDs.
 - Terms and abbreviations come from the term base of `fpsot-spec-writing`. Add a missing term there first; `TERMS-NEEDED.md` lists the pending ones.

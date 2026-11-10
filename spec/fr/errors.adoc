@@ -10,7 +10,7 @@ La {abbr-fpsot-first} tient la liste de ses types de problèmes d'identité et d
 [[IAM-100]]
 *IAM-100.* Une {abbr-api-first} qui refuse un jeton DOIT envoyer l'en-tête `WWW-Authenticate` que définit OAuth.
 L'en-tête suit le link:https://www.rfc-editor.org/info/rfc6750[RFC 6750] et le link:https://www.rfc-editor.org/info/rfc9470[RFC 9470], avec le schéma `DPoP` du link:https://www.rfc-editor.org/info/rfc9449[RFC 9449] s'il s'applique.
-Il porte le paramètre `resource_metadata` du link:https://www.rfc-editor.org/info/rfc9728[RFC 9728].
+Il DEVRAIT porter le paramètre `resource_metadata` du link:https://www.rfc-editor.org/info/rfc9728[RFC 9728].
 La réponse DOIT aussi porter un corps de détails du problème, comme l'exige API-030.
 Le corps NE DOIT PAS remplacer l'en-tête, et NE DOIT PAS le contredire.
 Les clients OAuth lisent l'en-tête, alors que les autres clients et les personnes lisent le corps.
@@ -32,7 +32,7 @@ Les titres en français et en anglais se trouvent dans `registry/problem-types.j
 |`dpop-nonce-required` |401 |`use_dpop_nonce` |La preuve de possession doit employer le nonce que le serveur a envoyé.
 |`insufficient-scope` |403 |`insufficient_scope` |Le jeton n'a pas une portée dont l'opération a besoin.
 |`insufficient-user-authentication` |401 |`insufficient_user_authentication` |L'opération exige une connexion plus forte ou plus récente, selon IAM-034.
-|`session-expired` |401 |Aucune |La session de l'interface Web a pris fin, selon IAM-040.
+|`session-expired` |401 |Aucune |La session de l'application frontale a pris fin, selon IAM-040.
 |`representation-required` |403 |Aucune |La personne doit choisir la partie pour laquelle elle agit, selon IAM-064.
 |`representation-expired` |403 |Aucune |Le droit d'agir pour la partie choisie a pris fin.
 |`authorization-unavailable` |503 |Aucune |Le service ne peut pas joindre le moteur d'autorisation, et refuse donc la requête selon IAM-051.
@@ -44,8 +44,10 @@ Ils reprennent les valeurs de l'en-tête, avec des noms de champs qui suivent AP
 [source,http]
 ----
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer error="insufficient_user_authentication",
-  acr_values="https://fpsot.org/assurance-levels/high"
+WWW-Authenticate: DPoP algs="ES256 PS256 EdDSA",
+  error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high",
+  resource_metadata="https://api.example.org/.well-known/oauth-protected-resource"
 Content-Type: application/problem+json
 Content-Language: fr
 

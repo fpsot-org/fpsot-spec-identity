@@ -48,14 +48,18 @@ The table below repeats the mapping for readers.
 |===
 |{abbr-fpsot} level |Québec |Canada |Pan-Canadian Trust Framework |eIDAS |{abbr-nist-first} SP 800-63-4
 |`low` |ID1 and AU1 |Credential level 2, to be verified |Level 1 or 2, to be verified |Low, to be verified |IAL1 and AAL1
-|`substantial` |ID2 and AU2, or ID3 and AU3 |Credential level 3 |Level 3, to be verified |Substantial, to be verified |IAL2 and AAL2
+|`substantial` |ID2 and AU2, or ID3 and AU3. At ID3, one-time codes by text message, voice, fax, email or mail are not allowed, and evidence is renewed every 18 months. |Credential level 3 |Level 3, to be verified |Substantial, to be verified |IAL2 and AAL2
 |`high` |ID4 and AU4 |Credential level 4 |Level 4, to be verified |High, to be verified |IAL3 and AAL3, with FAL2 or more
 |===
 
 The Québec column comes from the link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Québec rules on digital identity assurance].
-It also follows the Québec instruction IA-SI-2022-001-OP.
+It also follows the Québec instruction IA-SI-2022-001-OP, which names its levels _moyen_, _élevé_ and _très élevé_.
+This specification reads the _élevé_ level of that instruction as ID3, an inferred link that the instruction does not state.
 The Canada column comes from the federal link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[guideline on multifactor authentication].
 The other columns come from the link:https://diacc.ca/trust-framework/[Pan-Canadian Trust Framework], the link:https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[eIDAS levels regulation] and link:https://csrc.nist.gov/pubs/sp/800/63/4/final[NIST SP 800-63-4].
+
+The Québec level _élevé_ is ID3, and it corresponds to the {abbr-fpsot} level `substantial`, not to `high`.
+The same word therefore names two different levels, so a reader must check which framework a level belongs to.
 
 [[IAM-004]]
 *IAM-004.* An identity provider MUST NOT state an `acr` level above the identity verification that the account has passed.
@@ -81,6 +85,7 @@ Until then, a wallet can serve only as one more way to verify identity under IAM
 
 * link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Archived copy]
 * link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Government of Canada Guideline on Multi-Factor Authentication: Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain], Treasury Board of Canada Secretariat. link:https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Archived copy]
+* Indication d'application IA-SI-2022-001-OP, Niveaux d'assurance de l'identité, Gouvernement du Québec, Chief Government Information Security Officer, 2022-10-04. No archived copy exists. The PDF is at `https://www.cyber.gouv.qc.ca/publications/IA-SI-2022-001-OP_NiveauxAssurIdentite.pdf`.
 * link:https://diacc.ca/trust-framework/[Pan-Canadian Trust Framework], Digital ID and Authentication Council of Canada. link:https://web.archive.org/web/20261025150638/https://diacc.ca/trust-framework/[Archived copy]
 * link:https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[Commission Implementing Regulation (EU) 2015/1502 on minimum technical specifications and procedures for assurance levels for electronic identification means], European Commission, 2015-09-08. link:https://web.archive.org/web/20260202074700/https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[Archived copy]
 * link:https://csrc.nist.gov/pubs/sp/800/63/4/final[NIST SP 800-63-4, Digital Identity Guidelines], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261010080229/https://csrc.nist.gov/pubs/sp/800/63/4/final[Archived copy]

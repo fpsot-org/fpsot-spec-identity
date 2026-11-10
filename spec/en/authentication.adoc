@@ -22,6 +22,11 @@ With Web Authentication, it MUST check that the backup eligibility flag of the c
 A synced passkey MAY serve as a phishing-resistant factor at the `low` and `substantial` levels for the public.
 A synced key lives in a cloud account, so its safety depends on that account.
 
+The authenticator sets that flag itself, so the flag alone proves nothing.
+At the `high` level, the identity provider MUST also verify each new authenticator through its attestation.
+It MUST check the attestation against a trusted metadata source, or against a list of keys that the organization issued.
+link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4] requires a provider to know the traits of each authenticator it binds, such as through attestation.
+
 [[IAM-012]]
 *IAM-012.* Staff MUST sign in with phishing-resistant multifactor authentication.
 Administrators of the identity provider, of the {term-authorization-engine} and of their keys MUST use the `high` level.
@@ -43,6 +48,10 @@ The identity provider MUST accept at least 64 characters and paste from a passwo
 It MUST check each new password against a list of breached and common passwords.
 It MUST NOT impose composition rules or a periodic change, and MUST NOT use security questions or hints.
 Forced changes and composition rules lead people to weaker, predictable passwords.
+
+The identity provider MUST store each password salted and hashed with a password hashing scheme, under section 3.1.1.2.
+It MUST allow at most 100 failed attempts in a row on one account, under section 3.2.2.
+Salted hashes slow an attacker who steals the store, and the limit stops guessing online.
 
 [[IAM-015]]
 *IAM-015.* A code sent by text message or voice call SHOULD NOT serve as a factor.

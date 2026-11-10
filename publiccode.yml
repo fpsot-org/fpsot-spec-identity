@@ -18,7 +18,7 @@ description:
       Trust Framework, eIDAS and NIST SP 800-63-4. It profiles OpenID Connect
       and OAuth 2.0 on RFC 9700, with a backend for each browser front end and
       FAPI 2.0 at the high level. Authorization goes through one engine over
-      OpenID AuthZEN 1.0, with policies in plain Rego and exportable
+      OpenID AuthZEN 1.0, with policies in plain Rego (Rego v1) and exportable
       relationships. It also covers passkeys, sessions, representation,
       workload identity, provisioning, audit events and problem types. The
       rules name standards, not products.
@@ -37,15 +37,15 @@ description:
       correspondance publiée avec le Québec, le Canada, le Cadre de confiance
       pancanadien, eIDAS et le NIST SP 800-63-4. Elle présente un profil
       d'OpenID Connect et d'OAuth 2.0 fondé sur le RFC 9700, avec un serveur
-      dorsal pour chaque interface Web et FAPI 2.0 au niveau élevé.
+      dorsal dédié (BFF) pour chaque application frontale et FAPI 2.0 au niveau FPSOT élevé.
       L'autorisation passe par un moteur au moyen d'OpenID AuthZEN 1.0, avec
-      des politiques en Rego simple et des relations exportables. Elle couvre
+      des politiques en Rego simple (Rego v1) et des relations exportables. Elle couvre
       aussi les clés d'accès, les sessions, la représentation, l'identité des
       charges de travail, l'approvisionnement, les événements d'audit et les
       types de problèmes. Les règles nomment des normes, pas des produits.
     features:
       - Niveaux d'assurance mis en correspondance avec le Québec, le Canada, le CCP, eIDAS et le NIST
-      - Profil d'OpenID Connect et d'OAuth 2.0, FAPI 2.0 au niveau élevé
+      - Profil d'OpenID Connect et d'OAuth 2.0, FAPI 2.0 au niveau FPSOT élevé
       - Autorisation par OpenID AuthZEN 1.0 avec des politiques portables
       - Représentation d'une autre personne ou d'une entreprise
       - Événements d'audit d'identité et types de problèmes du RFC 9457

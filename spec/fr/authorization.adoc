@@ -9,7 +9,7 @@ Le modèle suit le point de décision et le point d'application du link:https://
 == Décision et application
 
 [[IAM-050]]
-*IAM-050.* Chaque service DOIT consulter un moteur d'autorisation avant d'agir sur une ressource, à chaque requête.
+*IAM-050.* Chaque service DOIT consulter un moteur d'autorisation avant d'agir sur une ressource protégée, à chaque requête.
 Le service DOIT appeler le moteur par l'{abbr-api-first} d'évaluation d'accès de link:https://openid.net/specs/authorization-api-1_0-final.html[OpenID AuthZEN Authorization API 1.0].
 Le moteur DOIT mettre en œuvre la liaison {abbr-https-first} de cette spécification, et DEVRAIT publier ses métadonnées à `/.well-known/authzen-configuration`.
 Le moteur PEUT offrir l'évaluation par lots et les API de recherche d'AuthZEN.
@@ -21,14 +21,14 @@ Une interface normalisée fait du moteur une pièce que tout produit conforme pe
 Il DOIT refuser quand le moteur répond par une erreur, répond trop tard, ou envoie une réponse illisible.
 Il DOIT vérifier chaque fonction et chaque objet sur le serveur, comme l'exige API-092, et pas seulement dans l'interface.
 Un service PEUT garder une décision d'autorisation pendant au plus 60 secondes.
-Il DOIT abandonner cette décision quand la version de la politique change.
+Il DOIT l'abandonner après 60 secondes, ou dès qu'une décision porte une version de politique plus récente, selon IAM-053.
 Les contrôles défaillants par objet et par fonction sont les risques un et cinq de l'link:https://owasp.org/API-Security/editions/2023/en/0x11-t10/[OWASP API Security Top 10].
 
 [[IAM-052]]
-*IAM-052.* Le {term-identity-provider} DOIT décider seulement de l'accès grossier, comme le droit d'employer une application.
-Les rôles et les groupes dans les jetons DOIVENT rester grossiers, comme `staff` ou `case-worker`.
+*IAM-052.* Le {term-identity-provider} DOIT décider seulement de l'accès général, comme le droit d'employer une application.
+Les rôles et les groupes dans les jetons DOIVENT rester généraux, comme `staff` ou `case-worker`.
 Les règles sur les dossiers, les cas, les montants ou les relations DOIVENT résider dans le moteur d'autorisation.
-Une fonction d'autorisation intégrée au fournisseur d'identité PEUT servir à cet accès grossier seulement.
+Une fonction d'autorisation intégrée au fournisseur d'identité PEUT servir à cet accès général seulement.
 Dans le fournisseur d'identité, les règles d'affaires dépendent d'un produit et échappent aux personnes qui revoient les politiques.
 
 == Politiques et données
@@ -43,7 +43,9 @@ Une personne qui fait un audit peut alors rejouer toute décision avec la politi
 
 [[IAM-054]]
 *IAM-054.* Chaque politique DOIT employer du Rego simple, le langage de politiques de l'link:https://www.openpolicyagent.org/docs/policy-language[Open Policy Agent].
-Une politique NE DOIT PAS employer une fonction intégrée ou un module d'extension qu'un seul moteur fournit.
+Le Rego simple désigne ici Rego v1, la syntaxe par défaut depuis l'Open Policy Agent 1.0.
+Une politique DOIT employer seulement les fonctions intégrées de la link:https://www.openpolicyagent.org/docs/policy-reference[référence des politiques Rego].
+Elle NE DOIT PAS employer une fonction intégrée ou un module d'extension qu'un seul moteur fournit.
 Le Rego simple fonctionne sur plus d'un moteur, et un changement de moteur garde donc les politiques.
 
 [[IAM-055]]
@@ -54,7 +56,7 @@ L'exploitant DOIT pouvoir charger le même export dans un autre moteur.
 Les relations sont souvent la partie la plus difficile à déplacer, et elles ont besoin d'une sortie dès le départ.
 
 [[IAM-056]]
-*IAM-056.* Un service DEVRAIT employer des rôles pour les droits grossiers et des règles d'attributs pour le contexte.
+*IAM-056.* Un service DEVRAIT employer des rôles pour les droits généraux et des règles d'attributs pour le contexte.
 Il DEVRAIT employer des relations pour la propriété, l'affectation à un dossier, l'appartenance à une organisation et la représentation.
 Chaque sorte de règle garde alors la forme qui lui convient, et les politiques restent courtes.
 
@@ -70,6 +72,7 @@ Les demandes de décision atteignent des journaux et des antémémoires, et les 
 
 * link:https://openid.net/specs/authorization-api-1_0-final.html[Authorization API 1.0], OpenID Foundation, AuthZEN Working Group, Final, 2026-01-11. link:https://web.archive.org/web/20260418221715/https://openid.net/specs/authorization-api-1_0-final.html[Copie archivée]
 * link:https://www.openpolicyagent.org/docs/policy-language[Policy Language], Open Policy Agent, Cloud Native Computing Foundation. link:https://web.archive.org/web/20261029223420/https://www.openpolicyagent.org/docs/policy-language[Copie archivée]
+* link:https://www.openpolicyagent.org/docs/policy-reference[Policy Reference], Open Policy Agent, Cloud Native Computing Foundation, Rego v1. link:https://web.archive.org/web/20261025073118/https://www.openpolicyagent.org/docs/policy-reference[Copie archivée]
 
 === Références informatives
 

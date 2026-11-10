@@ -27,6 +27,7 @@ Ask for the level in `acr_values`, and check `acr` in the identity token, under 
 
 Keep the tokens on the server, under IAM-021.
 Give the browser one cookie, marked `Secure` and `HttpOnly`, with `SameSite=Strict`.
+Start its name with the prefix `__Host-Http-`.
 Set the session limits for the public: 24 hours overall and 1 hour idle, under IAM-040.
 Use RP-Initiated Logout and Back-Channel Logout, under IAM-042.
 
@@ -39,8 +40,10 @@ For an operation that needs the `high` level, answer as below when the token fal
 [source,http]
 ----
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer error="insufficient_user_authentication",
-  acr_values="https://fpsot.org/assurance-levels/high"
+WWW-Authenticate: DPoP algs="ES256 PS256 EdDSA",
+  error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high",
+  resource_metadata="https://api.example.org/.well-known/oauth-protected-resource"
 Content-Type: application/problem+json
 
 {

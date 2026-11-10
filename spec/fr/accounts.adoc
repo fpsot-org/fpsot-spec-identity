@@ -7,8 +7,9 @@ Elles fixent aussi quand un service peut faire confiance à un {term-identity-pr
 == Approvisionnement
 
 [[IAM-080]]
-*IAM-080.* Une application DOIT lire les comptes dans les jetons seulement, ou garder une copie locale alimentée par le fournisseur.
-Une application qui garde une copie locale DOIT accepter l'approvisionnement par link:https://www.rfc-editor.org/info/rfc7644[SCIM 2.0], avec les schémas du link:https://www.rfc-editor.org/info/rfc7643[RFC 7643].
+*IAM-080.* Une application DOIT lire les comptes dans les jetons seulement, ou garder une copie locale que le fournisseur alimente.
+Une application qui garde une copie locale DEVRAIT accepter l'approvisionnement par link:https://www.rfc-editor.org/info/rfc7644[SCIM 2.0], avec les schémas du link:https://www.rfc-editor.org/info/rfc7643[RFC 7643].
+Elle PEUT plutôt recevoir les changements comme événements de l'link:https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html[OpenID Shared Signals Framework 1.0], ou par un envoi équivalent.
 Elle DEVRAIT prendre en charge la pagination par curseur du link:https://www.rfc-editor.org/info/rfc9865[RFC 9865] pour les grands annuaires.
 Une copie locale que personne ne met à jour garde les accès des personnes parties.
 
@@ -16,7 +17,8 @@ Une copie locale que personne ne met à jour garde les accès des personnes part
 *IAM-081.* Quand une personne part, ou quand l'organisation suspend un compte, le fournisseur d'identité DOIT le désactiver immédiatement.
 Il DOIT mettre fin à ses sessions et révoquer ses jetons d'actualisation.
 Chaque application qui a une copie locale DOIT recevoir le changement dans un délai de 1 heure.
-L'organisation DEVRAIT transmettre le changement par SCIM 2.0, ou comme événement de l'link:https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html[OpenID Shared Signals Framework 1.0].
+Ce délai compte à partir de la désactivation du compte par le fournisseur d'identité.
+Le changement DEVRAIT passer par SCIM 2.0, ou PEUT passer par un autre envoi que permet IAM-080.
 Une ancienne employée ou un ancien employé qui garde un accès est une cause fréquente de brèches.
 
 [[IAM-082]]
@@ -24,13 +26,14 @@ Une ancienne employée ou un ancien employé qui garde un accès est une cause f
 Le registre DOIT consigner la création, la suspension, la récupération, le maintien, la révocation et le renouvellement du compte.
 L'organisation DOIT revoir le registre au moins une fois par année.
 Les événements de la page xref:events.adoc[Événements d'identité et d'accès] alimentent ce registre.
-Les règles du Québec exigent un tel registre, revu chaque année.
+Les link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[règles du Québec sur l'assurance de l'identité numérique] exigent un tel registre, revu chaque année, à l'article 27.
 
 [[IAM-083]]
 *IAM-083.* Le fournisseur d'identité DOIT renouveler les preuves d'identité de chaque compte tous les 36 mois au niveau `substantial`.
 Au niveau `high`, il DOIT les renouveler au moins tous les 12 mois.
 Quand le gouvernement fixe un délai plus court, comme 18 mois pour le niveau ID3 du Québec, ce délai s'applique.
 Sans renouvellement à temps, le compte DOIT repasser la vérification de l'identité avant d'atteindre son niveau.
+Ces délais suivent l'article 26 des règles du Québec : 36 mois au niveau ID2, et 12 mois au niveau ID4.
 Les preuves vieillissent, et la situation d'une personne change.
 
 [[IAM-084]]
@@ -49,7 +52,7 @@ Les link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encry
 
 [[IAM-086]]
 *IAM-086.* Une assertion d'un fournisseur d'identité externe DOIT porter une signature et nommer le service comme seul public.
-Elle DOIT résister au rejeu.
+Elle DOIT résister au rejeu et à l'injection, et DOIT répondre à une demande que le service a lui-même faite.
 Elle NE DOIT PAS porter de renseignements personnels dans l'identifiant de la personne.
 Ces vérifications correspondent au niveau de fédération FAL2 du link:https://pages.nist.gov/800-63-4/sp800-63c.html[NIST SP 800-63C-4].
 Un service NE DOIT PAS relever le niveau d'un compte quand il y lie une identité externe d'un niveau inférieur.

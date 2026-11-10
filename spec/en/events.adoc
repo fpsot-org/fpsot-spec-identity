@@ -16,8 +16,8 @@ A minor version MAY add a type, under NAM-081.
 [cols="3,2,3",options="header"]
 |===
 |Type |Emitted by |When
-|`org.fpsot.identity.authentication.succeeded` |Identity provider |A person or a workload signs in, or steps up.
-|`org.fpsot.identity.authentication.failed` |Identity provider |A sign-in or a step up fails.
+|`org.fpsot.identity.authentication.succeeded` |Identity provider |A person or a workload signs in, or completes a step-up.
+|`org.fpsot.identity.authentication.failed` |Identity provider |A sign-in or a step-up fails.
 |`org.fpsot.identity.session.ended` |Identity provider or application |A session ends, with the reason under IAM-095.
 |`org.fpsot.identity.authenticator.enrolled` |Identity provider |A person adds an authenticator.
 |`org.fpsot.identity.authenticator.removed` |Identity provider |A person or an administrator removes an authenticator.
@@ -47,27 +47,38 @@ When a person acts for someone else, the event MUST also name the represented pa
 After a token exchange, it MUST name each actor of the `act` chain.
 An event about delegated work that names only one party cannot show who is responsible.
 
+The session identifier MUST be its own opaque value, such as the OpenID Connect `sid` or a keyed hash.
+It MUST NOT be the value of the session cookie of IAM-041.
+Anyone who reads the log could otherwise take over the session.
+
 [[IAM-092]]
 *IAM-092.* Each `access.evaluated` event MUST hold the subject, the action and the resource, by type and opaque identifier.
 It MUST also hold the decision, the policy version under IAM-053 and the identifier of the engine.
-It MUST hold a hash of the context of the request, not the context itself.
+It MUST hold an HMAC, which is a keyed hash, of the context of the request, not the context itself.
 Each decision MUST produce an event, whether it allows or denies.
 Decisions show the reasons for access, which no other record holds.
+Anyone can reverse a plain hash of a small context by guessing, but not a keyed hash without its key.
 
 [[IAM-093]]
 *IAM-093.* An event MUST NOT hold a password, a code, a token, a client assertion, a cookie or a key.
 It MUST NOT hold a name, an email address, a birth date, or a number that identifies a person.
 It MUST name people only by opaque identifiers, such as the `sub` of IAM-036.
-An event MUST keep only the first 24 bits of an IPv4 address, or 48 bits of IPv6.
-An `authentication.failed` or `account.suspended` event MAY hold the full address, to detect attacks.
+The FPSOT observability specification sets how a record minimizes network addresses, and this specification does not repeat it.
 Audit records outlive the sessions they describe, so each secret or personal detail in them stays exposed for years.
 
+For security review, three identity events need the full network address of the client.
+They are `authentication.failed`, `authentication.succeeded` and `account.suspended`.
+This list is an input to the minimization rules of the observability specification.
+
 [[IAM-094]]
-*IAM-094.* The data of each event type MUST follow a published {abbr-json-first} Schema, as API-103 requires.
+*IAM-094.* The data of each event type MUST follow its {abbr-json-first} Schema 2020-12, published in `registry/events/<type>.schema.json` as API-103 requires.
 Its field names MUST follow NAM-010, such as `representedPartyId`.
 Its outcome and reason MUST be code list values under NAM-060.
 Each value has labels in English and French under NAM-061.
 Machines then read the events in any language, and people see labels in theirs.
+
+The FPSOT observability specification names the attributes of the record, such as the time and the trace identifier.
+This specification sets only the fields of the event data, and does not define those names.
 
 [[IAM-095]]
 *IAM-095.* A `session.ended` event MUST give one of these reasons: `sign-out`, `idle-limit`, `overall-limit`, `assurance-dropped`, `revoked` or `account-suspended`.

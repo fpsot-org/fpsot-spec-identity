@@ -2,8 +2,8 @@ code: CA
 name: {en: Canada, fr: Canada}
 rows:
 - id: IAM-011
-  text: {en: 'For internal Government of Canada users, the guideline does not permit synced passkeys at credential level 4, and not at level 3 for now. Level 4 allows device-bound passkeys only.', fr: 'Pour les utilisateurs internes du gouvernement du Canada, la ligne directrice ne permet pas les clés d’accès synchronisées au niveau 4, ni pour l’instant au niveau 3. Le niveau 4 permet seulement les clés liées à l’appareil.'}
-  status: same
+  text: {en: 'For internal Government of Canada users, the guideline does not permit synced passkeys at credential level 4, and not at level 3 for now. Level 4 allows device-bound passkeys only. Level 3 maps to the FPSOT level substantial, where FPSOT accepts synced passkeys, so the guideline is stricter for staff.', fr: 'Pour les utilisateurs internes du gouvernement du Canada, la ligne directrice ne permet pas les clés d’accès synchronisées au niveau 4, ni pour l’instant au niveau 3. Le niveau 4 permet seulement les clés liées à l’appareil. Le niveau 3 correspond au niveau FPSOT substantiel, où la FPSOT accepte les clés d’accès synchronisées, et la ligne directrice est donc plus stricte pour le personnel.'}
+  status: stricter
   source: {title: 'Treasury Board of Canada Secretariat, Guideline on Multi-Factor Authentication (MFA): Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain', url: 'https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html', archive: 'https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html'}
   last_checked: "2026-11-10"
 - id: IAM-012

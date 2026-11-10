@@ -23,7 +23,8 @@ Elle s'authentifie avec `private_key_jwt` ou le {abbr-tls} mutuel, selon IAM-025
 Un appel dans un même réseau franchit tout de même une frontière de confiance.
 
 [[IAM-072]]
-*IAM-072.* Un service NE DOIT PAS transmettre le {term-access-token} d'une personne à une autre {abbr-api-first}.
+*IAM-072.* Un service NE DOIT PAS transmettre à une autre {abbr-api-first} un jeton qu'il a reçu.
+Cela vaut aussi pour le {term-access-token} d'une personne.
 Quand le service suivant doit connaître la personne, le premier service DOIT échanger le jeton selon IAM-065.
 Un jeton transmis atteint un public auquel il n'était pas destiné, et ce public peut alors le rejouer.
 

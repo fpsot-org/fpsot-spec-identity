@@ -19,14 +19,15 @@ Prévoyez donc des clés d'accès et des applications d'authentification.
 
 Configurez le {term-identity-provider} pour exiger l'authentification multifacteur et offrir les clés d'accès, selon IAM-010.
 Laissez chaque personne inscrire un deuxième authentifiant, selon IAM-013.
-Inscrivez le serveur dorsal de l'interface comme client confidentiel avec `private_key_jwt`, selon IAM-025.
+Inscrivez le serveur dorsal dédié (BFF) de l'application frontale comme client confidentiel avec `private_key_jwt`, selon IAM-025.
 Mettez seulement l'identifiant d'émetteur dans le `aud` de son assertion de client.
 Demandez le niveau dans `acr_values`, et vérifiez `acr` dans le jeton d'identité, selon IAM-023.
 
-== Construire le serveur dorsal de l'interface
+== Construire le serveur dorsal dédié
 
 Gardez les jetons sur le serveur, selon IAM-021.
 Donnez au navigateur un seul témoin, marqué `Secure` et `HttpOnly`, avec `SameSite=Strict`.
+Faites commencer son nom par le préfixe `__Host-Http-`.
 Fixez les délais de session pour le public : 24 heures au total et 1 heure d'inactivité, selon IAM-040.
 Employez RP-Initiated Logout et Back-Channel Logout, selon IAM-042.
 
@@ -39,8 +40,10 @@ Pour une opération qui exige le niveau `high`, répondez comme ci-dessous quand
 [source,http]
 ----
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer error="insufficient_user_authentication",
-  acr_values="https://fpsot.org/assurance-levels/high"
+WWW-Authenticate: DPoP algs="ES256 PS256 EdDSA",
+  error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high",
+  resource_metadata="https://api.example.org/.well-known/oauth-protected-resource"
 Content-Type: application/problem+json
 
 {

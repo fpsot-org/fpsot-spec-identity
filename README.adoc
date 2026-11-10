@@ -3,7 +3,7 @@
 Rules for how public-sector software signs people in, issues and checks tokens, and decides who may do what.
 It sets three assurance levels with their own `acr` values and a published mapping to Québec, Canada, the Pan-Canadian Trust Framework, eIDAS and NIST SP 800-63-4.
 It profiles OpenID Connect and OAuth 2.0 on the floor of RFC 9700, with a backend for each browser front end and FAPI 2.0 at the high level.
-Authorization goes through one engine over OpenID AuthZEN 1.0, with policies in plain Rego and exportable relationships.
+Authorization goes through one engine over OpenID AuthZEN 1.0, with policies in plain Rego (Rego v1) and exportable relationships.
 It also covers passkeys and sessions, representation of another person or a business, workload identity, provisioning, audit events and problem types.
 The rules name standards and capabilities, not products. Version 0.1 is a draft.
 
@@ -17,7 +17,7 @@ Each requirement has an ID from `IAM-001` to `IAM-103`.
 * Check audience, lifetime, level and key binding of each token at each API (IAM-030 to IAM-036).
 * Call the authorization engine over AuthZEN on every request, and deny by default (IAM-050 to IAM-057).
 * Model representation as relationships in the engine (IAM-060 to IAM-065).
-* Emit the events of the catalog, and return the problem types of `registry/problem-types.json` (IAM-090 to IAM-103).
+* Emit the events of the catalog with the schemas of `registry/events/`, and return the problem types of `registry/problem-types.json` (IAM-090 to IAM-103).
 
 The page `spec/en/reference-stack.adoc` is informative and names the products of the FPSOT reference implementation.
 
@@ -39,10 +39,10 @@ The page `spec/en/questions-for-counsel.adoc` lists the legal questions that rem
 | Normative text, in English and French. `book.adoc` joins the pages into one book.
 
 | `registry/`
-| `assurance-levels.yaml`, the level mapping, and `problem-types.json`, the problem types with English and French titles.
+| `assurance-levels.yaml`, the level mapping; `problem-types.json`, the problem types with English and French titles; `events/`, a JSON Schema 2020-12 for each event type.
 
 | `scripts/`
-| The check of `problem-types.json` against the text, and its tests. CI runs them in the job `registry`.
+| The check of `problem-types.json` and of the event schemas against the text, and its tests. CI runs them in the job `registry`.
 
 | `docs/`
 | Guides, in the Antora folder layout.
