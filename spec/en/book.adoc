@@ -1,4 +1,4 @@
-= Specification title
+= FPSOT identity and access specification
 :doctype: book
 :toc:
 

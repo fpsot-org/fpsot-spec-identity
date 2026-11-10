@@ -1,4 +1,4 @@
-= Titre de la spécification
+= Spécification FPSOT sur l'identité et l'accès
 include::_fpsot-terms.adoc[]
 
 Remplacez cette page par le texte normatif de la spécification.

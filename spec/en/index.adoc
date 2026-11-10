@@ -1,4 +1,4 @@
-= Specification title
+= FPSOT identity and access specification
 include::_fpsot-terms.adoc[]
 
 Replace this page with the normative text of the specification.
