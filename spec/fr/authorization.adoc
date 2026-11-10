@@ -1,0 +1,86 @@
+= Autorisation
+include::_fpsot-terms.adoc[]
+
+L'autorisation décide ce qu'une personne ou un service peut faire de chaque ressource.
+Ces règles gardent cette décision dans un seul {term-authorization-engine}, derrière une interface normalisée.
+Un organisme peut alors changer de moteur sans réécrire ses services.
+Le modèle suit le point de décision et le point d'application du link:https://csrc.nist.gov/pubs/sp/800/162/upd2/final[NIST SP 800-162].
+
+== Décision et application
+
+[[IAM-050]]
+*IAM-050.* Chaque service DOIT consulter un moteur d'autorisation avant d'agir sur une ressource, à chaque requête.
+Le service DOIT appeler le moteur par l'{abbr-api-first} d'évaluation d'accès de link:https://openid.net/specs/authorization-api-1_0-final.html[OpenID AuthZEN Authorization API 1.0].
+Le moteur DOIT mettre en œuvre la liaison {abbr-https-first} de cette spécification, et DEVRAIT publier ses métadonnées à `/.well-known/authzen-configuration`.
+Le moteur PEUT offrir l'évaluation par lots et les API de recherche d'AuthZEN.
+Le service DOIT s'authentifier auprès du moteur, avec le {abbr-tls-first} mutuel ou un jeton d'accès.
+Une interface normalisée fait du moteur une pièce que tout produit conforme peut remplacer.
+
+[[IAM-051]]
+*IAM-051.* Un service DOIT refuser par défaut.
+Il DOIT refuser quand le moteur répond par une erreur, répond trop tard, ou envoie une réponse illisible.
+Il DOIT vérifier chaque fonction et chaque objet sur le serveur, comme l'exige API-092, et pas seulement dans l'interface.
+Un service PEUT garder une décision d'autorisation pendant au plus 60 secondes.
+Il DOIT abandonner cette décision quand la version de la politique change.
+Les contrôles défaillants par objet et par fonction sont les risques un et cinq de l'link:https://owasp.org/API-Security/editions/2023/en/0x11-t10/[OWASP API Security Top 10].
+
+[[IAM-052]]
+*IAM-052.* Le {term-identity-provider} DOIT décider seulement de l'accès grossier, comme le droit d'employer une application.
+Les rôles et les groupes dans les jetons DOIVENT rester grossiers, comme `staff` ou `case-worker`.
+Les règles sur les dossiers, les cas, les montants ou les relations DOIVENT résider dans le moteur d'autorisation.
+Une fonction d'autorisation intégrée au fournisseur d'identité PEUT servir à cet accès grossier seulement.
+Dans le fournisseur d'identité, les règles d'affaires dépendent d'un produit et échappent aux personnes qui revoient les politiques.
+
+== Politiques et données
+
+[[IAM-053]]
+*IAM-053.* Chaque politique DOIT résider sous forme de code dans un dépôt de gestion des versions.
+Ses changements DOIVENT suivre SEC-010.
+Chaque politique DOIT avoir des tests automatisés qui vérifient ses décisions par l'interface d'évaluation.
+TST-005 exige la même chose pour les règles d'affaires.
+Chaque décision DOIT porter la version de la politique qui l'a prise.
+Une personne qui fait un audit peut alors rejouer toute décision avec la politique exacte de son époque.
+
+[[IAM-054]]
+*IAM-054.* Chaque politique DOIT employer du Rego simple, le langage de politiques de l'link:https://www.openpolicyagent.org/docs/policy-language[Open Policy Agent].
+Une politique NE DOIT PAS employer une fonction intégrée ou un module d'extension qu'un seul moteur fournit.
+Le Rego simple fonctionne sur plus d'un moteur, et un changement de moteur garde donc les politiques.
+
+[[IAM-055]]
+*IAM-055.* Le moteur DOIT permettre à l'exploitant d'exporter chaque relation qu'il contient, en tout temps, dans un format texte documenté.
+Chaque relation DOIT prendre la forme objet, relation, sujet, comme le décrit l'link:https://research.google/pubs/pub48190/[article sur Zanzibar], par exemple `case:123#owner@user:abc`.
+Le moteur DOIT aussi permettre d'exporter le modèle des types et des relations.
+L'exploitant DOIT pouvoir charger le même export dans un autre moteur.
+Les relations sont souvent la partie la plus difficile à déplacer, et elles ont besoin d'une sortie dès le départ.
+
+[[IAM-056]]
+*IAM-056.* Un service DEVRAIT employer des rôles pour les droits grossiers et des règles d'attributs pour le contexte.
+Il DEVRAIT employer des relations pour la propriété, l'affectation à un dossier, l'appartenance à une organisation et la représentation.
+Chaque sorte de règle garde alors la forme qui lui convient, et les politiques restent courtes.
+
+[[IAM-057]]
+*IAM-057.* Une requête au moteur DOIT nommer le sujet et la ressource par des identifiants opaques.
+Elle NE DOIT PAS les nommer par un nom ou par un numéro comme un numéro d'assurance sociale.
+Son contexte DOIT contenir seulement les attributs que lit la politique.
+Les demandes de décision atteignent des journaux et des antémémoires, et les renseignements personnels qu'elles contiennent s'y répandent.
+
+== Références
+
+=== Références normatives
+
+* link:https://openid.net/specs/authorization-api-1_0-final.html[Authorization API 1.0], OpenID Foundation, AuthZEN Working Group, Final, 2026-01-11. link:https://web.archive.org/web/20260418221715/https://openid.net/specs/authorization-api-1_0-final.html[Copie archivée]
+* link:https://www.openpolicyagent.org/docs/policy-language[Policy Language], Open Policy Agent, Cloud Native Computing Foundation. link:https://web.archive.org/web/20261029223420/https://www.openpolicyagent.org/docs/policy-language[Copie archivée]
+
+=== Références informatives
+
+* link:https://csrc.nist.gov/pubs/sp/800/162/upd2/final[NIST SP 800-162, Guide to Attribute Based Access Control (ABAC) Definition and Considerations], NIST, update 2, 2019-08. link:https://web.archive.org/web/20261025071649/https://csrc.nist.gov/pubs/sp/800/162/upd2/final[Copie archivée]
+* link:https://owasp.org/API-Security/editions/2023/en/0x11-t10/[OWASP Top 10 API Security Risks], OWASP, 2023. link:https://web.archive.org/web/20260903085910/https://owasp.org/API-Security/editions/2023/en/0x11-t10/[Copie archivée]
+* link:https://research.google/pubs/pub48190/[Zanzibar: Google's Consistent, Global Authorization System], USENIX Annual Technical Conference, 2019. link:https://web.archive.org/web/20231206170842/https://research.google/pubs/pub48190/[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

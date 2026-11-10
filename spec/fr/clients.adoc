@@ -1,0 +1,102 @@
+= Flux de connexion et clients
+include::_fpsot-terms.adoc[]
+
+Ces règles fixent comment une application connecte une personne, et comment chaque client prouve son identité.
+Elles présentent un profil d'link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0] et d'OAuth 2.0.
+Le link:https://www.rfc-editor.org/info/rfc9700[RFC 9700], la pratique exemplaire de sécurité d'OAuth 2.0, est le plancher de chaque règle ici.
+API-090 l'exige déjà pour chaque {abbr-api-first}.
+
+== Le flux de connexion
+
+[[IAM-020]]
+*IAM-020.* Une application DOIT connecter les personnes avec le flux par code d'autorisation d'OpenID Connect Core 1.0.
+Chaque client DOIT employer le défi de code du link:https://www.rfc-editor.org/info/rfc7636[RFC 7636] avec la méthode `S256`, même un client confidentiel.
+Un client NE DOIT PAS employer le flux implicite, l'octroi par mot de passe ou un flux hybride à jetons.
+Le client DOIT lire les paramètres du {term-identity-provider} dans son document de découverte, selon link:https://openid.net/specs/openid-connect-discovery-1_0.html[OpenID Connect Discovery 1.0].
+Un seul flux pour chaque client est plus simple à construire, à tester et à revoir.
+
+[[IAM-021]]
+*IAM-021.* Une interface Web DOIT employer un serveur dorsal dédié, comme le décrit le link:https://www.rfc-editor.org/info/rfc10017[RFC 10017].
+Ce serveur dorsal est le client OAuth, et il DOIT garder chaque jeton sur le serveur.
+Le code du navigateur NE DOIT PAS recevoir de {term-access-token}, de jeton d'actualisation ou de jeton d'identité, ni en stocker.
+Le navigateur DOIT seulement détenir un témoin de session marqué `Secure` et `HttpOnly`, qui DEVRAIT porter `SameSite=Strict`.
+Le serveur dorsal DOIT bloquer les requêtes falsifiées venues d'autres sites, avec une défense du même RFC.
+Un script qui s'exécute dans la page peut voler tout jeton que la page peut lire.
+
+[[IAM-022]]
+*IAM-022.* Le serveur d'autorisation DOIT comparer chaque adresse de redirection à la valeur inscrite, par égalité exacte des chaînes.
+Il DOIT accepter seulement des adresses de redirection `https`, sauf une adresse de bouclage pour une application native.
+Il DOIT envoyer le paramètre `iss` du link:https://www.rfc-editor.org/info/rfc9207[RFC 9207] dans chaque réponse d'autorisation.
+Le client DOIT vérifier que `iss` correspond à l'émetteur qu'il a appelé, et DOIT rejeter la réponse sinon.
+Une comparaison lâche des redirections et une confusion d'émetteurs sont les façons classiques de voler un code d'autorisation.
+
+[[IAM-023]]
+*IAM-023.* Le client DOIT vérifier l'émetteur, le public, la signature, l'expiration et le `nonce` de chaque jeton d'identité.
+Il DOIT demander le niveau {abbr-fpsot-first} du service dans le paramètre `acr_values`, selon IAM-002.
+Il DOIT vérifier que la revendication `acr` du jeton atteint le niveau du service.
+Un jeton d'identité sert au client seulement.
+Le client NE DOIT PAS l'envoyer à une {abbr-api} comme jeton d'accès.
+
+[[IAM-024]]
+*IAM-024.* Le client DEVRAIT envoyer le paramètre `ui_locales` avec les paramètres régionaux que LOC-005 choisit pour la personne.
+Le fournisseur d'identité DOIT alors afficher ses pages dans ces paramètres régionaux, s'il les prend en charge.
+La revendication `locale` DOIT contenir une étiquette de langue selon LOC-001, comme `fr-CA`.
+Le fournisseur d'identité DOIT garder la langue que la personne a choisie dans son profil, soit l'étape 2 de LOC-005.
+Une personne qui a choisi le français dans l'application s'attend aussi au français sur la page de connexion.
+
+== Authentification des clients
+
+[[IAM-025]]
+*IAM-025.* Un client confidentiel DOIT s'authentifier avec `private_key_jwt` ou avec le {abbr-tls-first} mutuel.
+Ces méthodes suivent le link:https://www.rfc-editor.org/info/rfc7523[RFC 7523], que met à jour le link:https://www.rfc-editor.org/info/rfc10070[RFC 10070], et le link:https://www.rfc-editor.org/info/rfc8705[RFC 8705].
+Le `aud` de l'assertion du client DOIT être l'identifiant d'émetteur du serveur d'autorisation, comme seule valeur.
+Le serveur d'autorisation DOIT rejeter une assertion avec tout autre public, comme l'adresse de son point de terminaison de jeton.
+Un client de niveau `substantial` ou `high` NE DOIT PAS employer un secret partagé, et les autres NE DEVRAIENT PAS.
+Un secret partagé se trouve aux deux bouts, et une fuite permet à quiconque d'agir comme le client.
+
+[[IAM-026]]
+*IAM-026.* Au niveau `high`, le serveur d'autorisation DOIT lier chaque jeton d'accès à une clé que détient le client.
+Une interface Web et son serveur dorsal DOIVENT employer DPoP, la preuve de clé du link:https://www.rfc-editor.org/info/rfc9449[RFC 9449].
+Un appel d'un service à un autre DOIT employer des jetons liés au certificat d'une connexion {abbr-tls} mutuelle.
+Au niveau `substantial`, le serveur d'autorisation DEVRAIT lier les jetons de la même façon.
+Une personne qui vole un jeton lié ne peut pas s'en servir sans sa clé.
+
+[[IAM-027]]
+*IAM-027.* Au niveau `high`, le serveur d'autorisation, ses clients et ses API DOIVENT respecter le link:https://openid.net/specs/fapi-security-profile-2_0-final.html[FAPI 2.0 Security Profile].
+Ce profil exige entre autres les demandes d'autorisation poussées, le défi de code et les jetons liés.
+Aux autres niveaux, un client Web confidentiel DEVRAIT employer les demandes d'autorisation poussées du link:https://www.rfc-editor.org/info/rfc9126[RFC 9126].
+FAPI 2.0 a un modèle formel de l'attaquant et une suite de tests ouverte, que cette règle apporte.
+
+[[IAM-028]]
+*IAM-028.* Le serveur d'autorisation DOIT inscrire chaque client avec ses redirections, ses types d'octroi, ses portées et ses clés.
+Un client DEVRAIT publier ses clés publiques à une adresse `jwks_uri`, pour les changer sans intervention manuelle.
+La personne responsable d'un client DOIT changer ses clés selon SEC-023.
+Elle DOIT garder la clé privée hors de tout dépôt, selon SEC-020.
+Le serveur d'autorisation DOIT publier ses métadonnées selon le link:https://www.rfc-editor.org/info/rfc8414[RFC 8414] ou OpenID Connect Discovery 1.0.
+Une inscription fixe limite ce que permet une identité de client volée.
+
+== Références
+
+=== Références normatives
+
+* link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0 incorporating errata set 2], OpenID Foundation, Final, 2023-12-15. Also published as ISO/IEC 26131:2024. link:https://web.archive.org/web/20261023004717/https://openid.net/specs/openid-connect-core-1_0.html[Copie archivée]
+* link:https://openid.net/specs/openid-connect-discovery-1_0.html[OpenID Connect Discovery 1.0 incorporating errata set 2], OpenID Foundation, Final, 2023-12-15. link:https://web.archive.org/web/20261031153750/https://openid.net/specs/openid-connect-discovery-1_0.html[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9700[RFC 9700, Best Current Practice for OAuth 2.0 Security], IETF, BCP 240, 2025-01. link:https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc7636[RFC 7636, Proof Key for Code Exchange by OAuth Public Clients], IETF, 2015-09. link:https://web.archive.org/web/20261102230719/https://www.rfc-editor.org/info/rfc7636/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc10017[RFC 10017, OAuth 2.0 for Browser-Based Applications], IETF, Best Current Practice, 2026-08. link:https://web.archive.org/web/20261101224723/https://www.rfc-editor.org/info/rfc10017/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9207[RFC 9207, OAuth 2.0 Authorization Server Issuer Identification], IETF, 2022-03. link:https://web.archive.org/web/20261005125737/https://www.rfc-editor.org/info/rfc9207/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc7523[RFC 7523, JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants], IETF, 2015-05. link:https://web.archive.org/web/20261024144505/https://www.rfc-editor.org/info/rfc7523/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc10070[RFC 10070, Updates to OAuth 2.0 JSON Web Token (JWT) Client Authentication and Assertion-Based Authorization Grants], IETF, 2026-11. link:https://web.archive.org/web/20260516092522/https://datatracker.ietf.org/doc/draft-ietf-oauth-rfc7523bis/[Copie archivée de draft-ietf-oauth-rfc7523bis, avant la publication]
+* link:https://www.rfc-editor.org/info/rfc8705[RFC 8705, OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens], IETF, 2020-02. link:https://web.archive.org/web/20261018062748/https://www.rfc-editor.org/info/rfc8705/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9449[RFC 9449, OAuth 2.0 Demonstrating Proof of Possession (DPoP)], IETF, 2023-09. link:https://web.archive.org/web/20261103003951/https://www.rfc-editor.org/info/rfc9449/[Copie archivée]
+* link:https://openid.net/specs/fapi-security-profile-2_0-final.html[FAPI 2.0 Security Profile], OpenID Foundation, Final, 2025-02-22. link:https://web.archive.org/web/20261005125724/https://openid.net/specs/fapi-security-profile-2_0-final.html[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9126[RFC 9126, OAuth 2.0 Pushed Authorization Requests], IETF, 2021-09. link:https://web.archive.org/web/20261108185458/https://www.rfc-editor.org/info/rfc9126/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc8414[RFC 8414, OAuth 2.0 Authorization Server Metadata], IETF, 2018-06. link:https://web.archive.org/web/20261101164937/https://www.rfc-editor.org/info/rfc8414/[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

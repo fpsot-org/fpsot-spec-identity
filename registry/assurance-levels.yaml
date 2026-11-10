@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: Community-Spec-1.0
+# FPSOT assurance levels (IAM-001, IAM-002) and their mapping to other frameworks (IAM-003).
+# A mapping with verified: false is "to be verified": confirm it with the authority before relying on it.
+# Checked: 2026-11-10.
+levels:
+  - id: low
+    acr: https://fpsot.org/assurance-levels/low
+    label: {en: Low, fr: Faible}
+    mappings:
+      ca-qc: {value: "ID1 and AU1", verified: true, note: {en: "Annexes 1 and 3 of the Règles.", fr: "Annexes 1 et 3 des Règles."}}
+      ca: {value: "Credential LoA 2", verified: false, note: {en: "The federal Standard on Identity and Credential Assurance could not be read.", fr: "La norme fédérale sur l'assurance de l'identité et des justificatifs n'a pas pu être lue."}}
+      pctf: {value: "LOA1 or LOA2", verified: false, note: {en: "The current PCTF level definitions were not retrieved.", fr: "Les définitions actuelles des niveaux du CCP n'ont pas été obtenues."}}
+      eidas: {value: "low", verified: false, note: {en: "Implementing Regulation (EU) 2015/1502 was not read.", fr: "Le règlement d'exécution (UE) 2015/1502 n'a pas été lu."}}
+      nist-800-63-4: {value: "IAL1, AAL1", verified: true}
+  - id: substantial
+    acr: https://fpsot.org/assurance-levels/substantial
+    label: {en: Substantial, fr: Substantiel}
+    mappings:
+      ca-qc: {value: "ID2 and AU2, or ID3 and AU3", verified: true, note: {en: "At ID3, the instruction IA-SI-2022-001-OP bans one-time codes sent by text message, voice, fax, email or mail, and the Règles renew evidence every 18 months.", fr: "Au niveau ID3, l'indication IA-SI-2022-001-OP interdit les codes à usage unique transmis par SMS, appel vocal, télécopie, courriel ou courrier, et les Règles renouvellent les preuves tous les 18 mois."}}
+      ca: {value: "Credential LoA 3", verified: true, note: {en: "The federal guideline on multifactor authentication equates LoA 3 with NIST AAL2.", fr: "La ligne directrice fédérale sur l'authentification multifacteur fait correspondre le niveau 3 au niveau AAL2 du NIST."}}
+      pctf: {value: "LOA3", verified: false}
+      eidas: {value: "substantial", verified: false}
+      nist-800-63-4: {value: "IAL2, AAL2", verified: true}
+  - id: high
+    acr: https://fpsot.org/assurance-levels/high
+    label: {en: High, fr: Élevé}
+    mappings:
+      ca-qc: {value: "ID4 and AU4", verified: true, note: {en: "AU4 requires at least one hardware cryptographic device. A body may also choose high for an ID3 service.", fr: "Le niveau AU4 exige au moins un dispositif cryptographique matériel. Un organisme peut aussi choisir le niveau élevé pour un service ID3."}}
+      ca: {value: "Credential LoA 4", verified: true, note: {en: "The federal guideline equates LoA 4 with NIST AAL3 and refuses synced passkeys there.", fr: "La ligne directrice fédérale fait correspondre le niveau 4 au niveau AAL3 du NIST et y refuse les clés d'accès synchronisées."}}
+      pctf: {value: "LOA4", verified: false}
+      eidas: {value: "high", verified: false}
+      nist-800-63-4: {value: "IAL3, AAL3, FAL2 or higher", verified: true}
+sources:
+  ca-qc:
+    - {title: "Règles relatives à l'assurance de l'identité numérique (A.M. 2024-03)", date: "2024-07-17", url: "https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf"}
+    - {title: "Indication d'application IA-SI-2022-001-OP", date: "2022-10-04", url: "https://www.cyber.gouv.qc.ca/publications/IA-SI-2022-001-OP_NiveauxAssurIdentite.pdf"}
+  ca:
+    - {title: "Guideline on Multi-Factor Authentication (MFA)", url: "https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html"}
+  pctf:
+    - {title: "Pan-Canadian Trust Framework", url: "https://diacc.ca/trust-framework/"}
+  eidas:
+    - {title: "Commission Implementing Regulation (EU) 2015/1502", date: "2015-09-08", url: "https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj"}
+  nist-800-63-4:
+    - {title: "NIST SP 800-63-4, Digital Identity Guidelines", date: "2025-07", url: "https://csrc.nist.gov/pubs/sp/800/63/4/final"}

@@ -1,0 +1,95 @@
+= Assurance levels
+include::_fpsot-terms.adoc[]
+
+Each service needs a known level of trust that a person is who they claim to be.
+This page sets the three {abbr-fpsot-first} assurance levels and how a service picks one.
+The rest of the specification raises its rules with the level.
+
+== The three levels
+
+[[IAM-001]]
+*IAM-001.* Each service MUST declare the {abbr-fpsot} assurance level that it requires: `low`, `substantial` or `high`.
+It MUST choose the level from a documented assessment, which weighs the harm that a wrong identity could cause.
+The assessment MUST cover the confidentiality, the integrity and the availability of the information.
+A service that needs no sign-in MUST still record the assessment and its result.
+A public body in Québec must assess every service in the same way, so one assessment serves both purposes.
+The table gives the minimum of each level.
+
+[cols="1,3,3",options="header"]
+|===
+|Level |Identity verification |Authentication
+|`low` |The person states their own details, or the service asks for none. |One factor, under IAM-014.
+|`substantial` |The service checks evidence of identity, such as a photo identity document, against a trusted source. |Multifactor authentication, with a phishing-resistant option on offer, under IAM-010. Synced passkeys count.
+|`high` |An agent or an equivalent means checks several pieces of evidence, and corroborates them with a trusted source. |Phishing-resistant multifactor authentication with a device-bound key in hardware, under IAM-011.
+|===
+
+[[IAM-002]]
+*IAM-002.* The `acr` claim of an identity token or an access token MUST hold one of these values.
+
+* `https://fpsot.org/assurance-levels/low`
+* `https://fpsot.org/assurance-levels/substantial`
+* `https://fpsot.org/assurance-levels/high`
+
+The `acr` value MUST name the level that the current sign-in meets, not the method.
+The methods go in the `amr` claim, with the values of the link:https://www.iana.org/assignments/jwt/jwt.xhtml[JSON Web Token claims registry] and link:https://www.rfc-editor.org/info/rfc8176[RFC 8176].
+A level URI keeps its meaning across products and countries, while a method name says nothing about strength.
+The URIs follow NAM-030 and NAM-083, so they stay stable.
+
+[[IAM-003]]
+*IAM-003.* A service MUST pick an {abbr-fpsot} level at least as strict as the level that its jurisdiction requires.
+It MUST read the mapping in the file `registry/assurance-levels.yaml` of this repository.
+The service MUST confirm with the authority each mapping that carries the mark _to be verified_.
+A jurisdiction can set a stricter detail, such as a ban on codes sent by text message.
+The service MUST also meet that detail.
+
+The table below repeats the mapping for readers.
+
+[cols="1,2,2,1,1,2",options="header"]
+|===
+|{abbr-fpsot} level |Québec |Canada |Pan-Canadian Trust Framework |eIDAS |{abbr-nist-first} SP 800-63-4
+|`low` |ID1 and AU1 |Credential level 2, to be verified |Level 1 or 2, to be verified |Low, to be verified |IAL1 and AAL1
+|`substantial` |ID2 and AU2, or ID3 and AU3 |Credential level 3 |Level 3, to be verified |Substantial, to be verified |IAL2 and AAL2
+|`high` |ID4 and AU4 |Credential level 4 |Level 4, to be verified |High, to be verified |IAL3 and AAL3, with FAL2 or more
+|===
+
+The Québec column comes from the link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Québec rules on digital identity assurance].
+It also follows the Québec instruction IA-SI-2022-001-OP.
+The Canada column comes from the federal link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[guideline on multifactor authentication].
+The other columns come from the link:https://diacc.ca/trust-framework/[Pan-Canadian Trust Framework], the link:https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[eIDAS levels regulation] and link:https://csrc.nist.gov/pubs/sp/800/63/4/final[NIST SP 800-63-4].
+
+[[IAM-004]]
+*IAM-004.* An identity provider MUST NOT state an `acr` level above the identity verification that the account has passed.
+A strong authenticator on an unverified account proves only that the same person came back.
+A service SHOULD record the identity verification level and the authentication level of an account as two separate facts.
+It can then raise one without the other, as the Québec rules and {abbr-nist} SP 800-63-4 do.
+
+== Digital wallets
+
+This version sets no rule on digital identity wallets or verifiable credentials.
+European wallets and link:https://openid.net/specs/openid-4-verifiable-presentations-1_0-final.html[OpenID for Verifiable Presentations 1.0] may lead to rules later.
+So may the planned Québec wallet.
+Until then, a wallet can serve only as one more way to verify identity under IAM-001.
+
+== References
+
+=== Normative
+
+* link:https://www.rfc-editor.org/info/rfc8176[RFC 8176, Authentication Method Reference Values], IETF, 2017-06. link:https://web.archive.org/web/20261110131210/https://www.rfc-editor.org/info/rfc8176/[Archived copy]
+* link:https://www.iana.org/assignments/jwt/jwt.xhtml[JSON Web Token Claims], IANA, registry. link:https://web.archive.org/web/20260731100731/https://www.iana.org/assignments/jwt/jwt.xhtml[Archived copy]
+
+=== Informative
+
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Archived copy]
+* link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Government of Canada Guideline on Multi-Factor Authentication: Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain], Treasury Board of Canada Secretariat. link:https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Archived copy]
+* link:https://diacc.ca/trust-framework/[Pan-Canadian Trust Framework], Digital ID and Authentication Council of Canada. link:https://web.archive.org/web/20261025150638/https://diacc.ca/trust-framework/[Archived copy]
+* link:https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[Commission Implementing Regulation (EU) 2015/1502 on minimum technical specifications and procedures for assurance levels for electronic identification means], European Commission, 2015-09-08. link:https://web.archive.org/web/20260202074700/https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[Archived copy]
+* link:https://csrc.nist.gov/pubs/sp/800/63/4/final[NIST SP 800-63-4, Digital Identity Guidelines], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261010080229/https://csrc.nist.gov/pubs/sp/800/63/4/final[Archived copy]
+* link:https://openid.net/specs/openid-4-verifiable-presentations-1_0-final.html[OpenID for Verifiable Presentations 1.0], OpenID Foundation, Final, 2025-07-10. link:https://web.archive.org/web/20261004185622/https://openid.net/specs/openid-4-verifiable-presentations-1_0-final.html[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

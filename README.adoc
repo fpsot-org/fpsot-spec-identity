@@ -1,33 +1,33 @@
-= FPSOT specification template
+= FPSOT identity and access specification
 
-This repository is the starting point for an FPSOT specification.
-Create a new repository from it, then replace this text.
-
-== Start a specification
-
-. Set `SPEC_PREFIX` in `.github/workflows/ci.yml` to the three-letter prefix of the requirement IDs.
-. Replace the titles in `spec/`, `docs/antora.yml`, `publiccode.yml`, `AGENTS.md`, `NOTICE` and `skill/SKILL.md`.
-. Replace the example requirement TPL-001 and the example row in `jurisdictions/baseline.yaml`.
-. List each spec page in `spec/<lang>/book.adoc`. The glossary stays the last include.
-
-Each page ends with a document history.
-Each guide page sets `:page-type:` to tutorial, how-to, reference or explanation.
-Write abbreviations and defined terms as `{abbr-…}` and `{term-…}` from the term base of `fpsot-spec-writing`.
-Write English in US spelling.
-Each page that cites outside sources ends with a References section, right before its document history.
-Each code block names its language, such as `[source,text]` or `[source,plantuml]`.
-The continuous integration writes `_fpsot-terms.adoc`, the glossaries and the comparison pages. Git ignores them.
+Rules for how public-sector software signs people in, issues and checks tokens, and decides who may do what.
+It sets three assurance levels with their own `acr` values and a published mapping to Québec, Canada, the Pan-Canadian Trust Framework, eIDAS and NIST SP 800-63-4.
+It profiles OpenID Connect and OAuth 2.0 on the floor of RFC 9700, with a backend for each browser front end and FAPI 2.0 at the high level.
+Authorization goes through one engine over OpenID AuthZEN 1.0, with policies in plain Rego and exportable relationships.
+It also covers passkeys and sessions, representation of another person or a business, workload identity, provisioning, audit events and problem types.
+The rules name standards and capabilities, not products. Version 0.1 is a draft.
 
 == Implement this spec
 
 Read the normative text in `spec/en/` or `spec/fr/`.
-Each requirement has an ID, such as `XYZ-001`.
-Check your implementation against every requirement.
+Each requirement has an ID from `IAM-001` to `IAM-103`.
+
+* Declare the level of each service and map it with `registry/assurance-levels.yaml` (IAM-001 to IAM-004).
+* Sign people in with the authorization code flow and PKCE, through a backend for the front end (IAM-020 to IAM-028).
+* Check audience, lifetime, level and key binding of each token at each API (IAM-030 to IAM-036).
+* Call the authorization engine over AuthZEN on every request, and deny by default (IAM-050 to IAM-057).
+* Model representation as relationships in the engine (IAM-060 to IAM-065).
+* Emit the events of the catalog, and return the problem types of `registry/problem-types.json` (IAM-090 to IAM-103).
+
+The page `spec/en/reference-stack.adoc` is informative and names the products of the FPSOT reference implementation.
 
 == Adopt this spec
 
-Read the guides in `docs/modules/en/pages/` or `docs/modules/fr/pages/`.
-They explain what the spec gives your organization and how to require it.
+Read the guide in `docs/modules/en/pages/index.adoc` or `docs/modules/fr/pages/index.adoc`.
+It walks one new service through the level, the sign-in, the API, the authorization engine and the events.
+A request for proposals can require that a supplier meet this specification, or name a level of IAM-001.
+The comparison data in `jurisdictions/` shows how the rules of Canada and Québec differ.
+The page `spec/en/questions-for-counsel.adoc` lists the legal questions that remain open. The specification is not legal advice.
 
 == Layout
 
@@ -37,6 +37,12 @@ They explain what the spec gives your organization and how to require it.
 
 | `spec/`
 | Normative text, in English and French. `book.adoc` joins the pages into one book.
+
+| `registry/`
+| `assurance-levels.yaml`, the level mapping, and `problem-types.json`, the problem types with English and French titles.
+
+| `scripts/`
+| The check of `problem-types.json` against the text, and its tests. CI runs them in the job `registry`.
 
 | `docs/`
 | Guides, in the Antora folder layout.
@@ -51,7 +57,7 @@ They explain what the spec gives your organization and how to require it.
 | PlantUML sources and their rendered SVG files.
 
 | `jurisdictions/`
-| Comparison data per jurisdiction. `baseline.yaml` lists the compared requirements.
+| Comparison data: how each government handles the same topics.
 |===
 
 == License

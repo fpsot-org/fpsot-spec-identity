@@ -1,15 +1,86 @@
-= Guide
-:page-type: explanation
+= Secure a new service
+:page-type: how-to
 include::_fpsot-terms.adoc[]
 
-This page explains the specification for the people who adopt it.
-Each guide page has one type.
-It is a tutorial, a how-to guide, a reference or an explanation.
+This guide takes a team from a new public service to a sign-in and an {abbr-api-first} that meet this specification.
+Each step cites the rule it meets.
+The example is a service where a person files a request for a business.
+
+== Choose the level
+
+Assess the harm that a wrong identity could cause to the data, under IAM-001.
+Cover its confidentiality, its integrity and its availability.
+A request for a business that holds financial data fits the `substantial` level.
+Check the mapping of your jurisdiction in `registry/assurance-levels.yaml`, under IAM-003.
+In Québec, this service is at the level ID2 or ID3.
+At ID3, codes sent by text message are not allowed, so plan for passkeys and authenticator apps.
+
+== Set up the sign-in
+
+Configure the {term-identity-provider} to require multifactor authentication and to offer passkeys, under IAM-010.
+Let each person enroll a second authenticator, under IAM-013.
+Register the backend of the front end as a confidential client with `private_key_jwt`, under IAM-025.
+Put the issuer identifier alone in the `aud` of its client assertion.
+Ask for the level in `acr_values`, and check `acr` in the identity token, under IAM-023.
+
+== Build the backend for the front end
+
+Keep the tokens on the server, under IAM-021.
+Give the browser one cookie, marked `Secure` and `HttpOnly`, with `SameSite=Strict`.
+Set the session limits for the public: 24 hours overall and 1 hour idle, under IAM-040.
+Use RP-Initiated Logout and Back-Channel Logout, under IAM-042.
+
+== Protect the API
+
+Accept only tokens whose `aud` names your {abbr-api}, under IAM-030.
+Publish the metadata of your {abbr-api} at `/.well-known/oauth-protected-resource`, under IAM-033.
+For an operation that needs the `high` level, answer as below when the token falls short, under IAM-034.
+
+[source,http]
+----
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high"
+Content-Type: application/problem+json
+
+{
+  "type": "https://fpsot.org/problems/identity/insufficient-user-authentication",
+  "title": "A stronger or more recent sign-in is needed.",
+  "status": 401,
+  "acrValues": ["https://fpsot.org/assurance-levels/high"]
+}
+----
+
+== Ask the authorization engine
+
+On each request, send an evaluation to the {term-authorization-engine} over AuthZEN, under IAM-050.
+Name the person and the request by opaque identifiers, under IAM-057.
+Pass the business that the person acts for in the context, under IAM-064.
+
+[source,json]
+----
+{
+  "subject": {"type": "user", "id": "u-7f3c2a"},
+  "action": {"name": "submit"},
+  "resource": {"type": "request", "id": "r-1029"},
+  "context": {"representedPartyId": "p-55e0"}
+}
+----
+
+Deny when the answer is `false`, when the engine fails, or when it is late, under IAM-051.
+Store the relationship "representative of this business" in the engine, under IAM-061.
+Give it a scope, an end date and a reference to its proof.
+
+== Record the events
+
+Emit `org.fpsot.identity.access.evaluated` for each decision, under IAM-092.
+Name the person and the business by their opaque identifiers only, under IAM-093.
+The FPSOT observability specification sets how to keep these events.
 
 == Document history
 
 [cols="1,1,4",options="header"]
 |===
 |Version |Date |Change
-|0.1.0 |2026-11-03 |First version.
+|0.1.0 |2026-11-10 |First version.
 |===

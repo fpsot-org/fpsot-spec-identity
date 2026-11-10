@@ -1,0 +1,96 @@
+= Sign-in and authenticators
+include::_fpsot-terms.adoc[]
+
+These rules set which authenticators a person can use at each assurance level.
+They also cover backup authenticators, the recovery of an account and a suspected compromise.
+The protocol of the sign-in itself is on the page xref:clients.adoc[Sign-in flows and clients].
+
+== Multifactor authentication
+
+[[IAM-010]]
+*IAM-010.* A service at the `substantial` or `high` level MUST require multifactor authentication.
+The {term-identity-provider} MUST offer at least one phishing-resistant authenticator to every person, such as a passkey.
+A phishing-resistant authenticator proves that it holds a key bound to the real site.
+link:https://www.w3.org/TR/webauthn-3/[Web Authentication Level 3] works this way.
+A code that the person types never resists phishing, whatever the channel.
+Phishing-resistant authenticators stop the adversary-in-the-middle attacks that defeat codes.
+
+[[IAM-011]]
+*IAM-011.* At the `high` level, one factor MUST be a device-bound key that no one can export, held in hardware.
+The identity provider MUST refuse a synced passkey at this level.
+With Web Authentication, it MUST check that the backup eligibility flag of the credential is not set.
+A synced passkey MAY serve as a phishing-resistant factor at the `low` and `substantial` levels for the public.
+A synced key lives in a cloud account, so its safety depends on that account.
+
+[[IAM-012]]
+*IAM-012.* Staff MUST sign in with phishing-resistant multifactor authentication.
+Administrators of the identity provider, of the {term-authorization-engine} and of their keys MUST use the `high` level.
+An organization MAY refuse synced passkeys for its staff at every level.
+Staff accounts reach many records at once, and attackers target them first.
+
+[[IAM-013]]
+*IAM-013.* The identity provider MUST let each person choose among at least two kinds of authenticator at each level.
+It MUST let each person enroll a backup authenticator of the same level, before they need it.
+A person who loses the only authenticator would otherwise lose access, or fall back to a weak recovery.
+The Québec rules require this choice and these backups.
+
+== Weak authenticators
+
+[[IAM-014]]
+*IAM-014.* A password MUST follow the rules on passwords of link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4].
+A password MUST have at least 15 characters when it is the only factor, and at least 8 otherwise.
+The identity provider MUST accept at least 64 characters and paste from a password manager.
+It MUST check each new password against a list of breached and common passwords.
+It MUST NOT impose composition rules or a periodic change, and MUST NOT use security questions or hints.
+Forced changes and composition rules lead people to weaker, predictable passwords.
+
+[[IAM-015]]
+*IAM-015.* A code sent by text message or voice call SHOULD NOT serve as a factor.
+It MAY serve as a fallback that the person chooses.
+It MUST NOT serve as a factor at the `high` level.
+Email MUST NOT serve as an authenticator at any level.
+A push approval MUST show a number that the person matches, or MUST NOT serve as a factor.
+Attackers take over phone numbers and mailboxes, and people approve a push request out of habit.
+
+== Recovery and compromise
+
+[[IAM-016]]
+*IAM-016.* Account recovery MUST NOT give access at a level above the evidence that the recovery checked.
+To regain `substantial` or `high`, a person MUST use a backup authenticator of that level.
+The person MAY instead pass identity verification again.
+Each recovery MUST send a notice to the person through a contact they confirmed earlier.
+Attackers use a weak recovery path to bypass a strong sign-in.
+
+[[IAM-017]]
+*IAM-017.* A service MUST let a person report a suspected misuse of their account.
+It MUST tell the person when it detects one.
+On a suspected compromise, the identity provider MUST block the account at once.
+It MUST end its sessions and revoke its refresh tokens, under IAM-041.
+The service MUST then review the actions of the account since the suspected start, and cancel those it cannot trust.
+The Québec rules require such notice, a fast block and the canceling of related actions.
+
+== Sign-in pages
+
+Sign-in, enrollment and recovery pages follow the FPSOT accessibility specification, ACC-001.
+That baseline includes the success criterion of link:https://www.w3.org/TR/WCAG22/[WCAG 2.2] on accessible sign-in.
+They offer English and French under LOC-003, and pick the language under LOC-005.
+Their messages follow WRT-040.
+
+== References
+
+=== Normative
+
+* link:https://www.w3.org/TR/webauthn-3/[Web Authentication: An API for accessing Public Key Credentials, Level 3], W3C, Recommendation, 2026-08-25. link:https://web.archive.org/web/20261027065855/https://www.w3.org/TR/webauthn-3/[Archived copy]
+* link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html[Archived copy]
+
+=== Informative
+
+* link:https://www.w3.org/TR/WCAG22/[Web Content Accessibility Guidelines (WCAG) 2.2], W3C, Recommendation, 2024-12-12. link:https://web.archive.org/web/20261108183355/https://www.w3.org/TR/WCAG22/[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

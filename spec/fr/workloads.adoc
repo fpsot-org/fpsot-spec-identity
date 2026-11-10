@@ -1,0 +1,59 @@
+= Identité des machines et des charges de travail
+include::_fpsot-terms.adoc[]
+
+Les services en appellent d'autres, et chaque appel doit prouver quel logiciel appelle.
+Ces règles donnent à chaque charge de travail sa propre identité.
+Elles empêchent l'identité d'une personne de fuir entre les services.
+Les link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[règles du Québec sur l'assurance de l'identité numérique] visent aussi les identités machine, à l'article 29.
+
+== Identité d'une charge de travail
+
+[[IAM-070]]
+*IAM-070.* Chaque charge de travail DOIT avoir sa propre identité cryptographique.
+L'identité PEUT être un identifiant link:https://spiffe.io/docs/latest/spiffe-about/overview/[SPIFFE] avec son certificat ou son jeton.
+Elle PEUT plutôt être un client que le serveur d'autorisation inscrit avec sa propre clé.
+Deux charges de travail, ou les copies de test et de production, NE DOIVENT PAS partager une identité.
+Chaque charge de travail DOIT recevoir seulement les publics et les portées dont elle a besoin.
+Une identité distincte par charge de travail permet de révoquer une pièce sans arrêter les autres.
+
+[[IAM-071]]
+*IAM-071.* Un appel entre deux services DOIT employer le {abbr-tls-first} mutuel, ou un jeton lié à la clé de l'appelant.
+Pour obtenir son propre jeton, une charge de travail DOIT employer l'octroi par justificatifs du client.
+Elle s'authentifie avec `private_key_jwt` ou le {abbr-tls} mutuel, selon IAM-025.
+Un appel dans un même réseau franchit tout de même une frontière de confiance.
+
+[[IAM-072]]
+*IAM-072.* Un service NE DOIT PAS transmettre le {term-access-token} d'une personne à une autre {abbr-api-first}.
+Quand le service suivant doit connaître la personne, le premier service DOIT échanger le jeton selon IAM-065.
+Un jeton transmis atteint un public auquel il n'était pas destiné, et ce public peut alors le rejouer.
+
+[[IAM-073]]
+*IAM-073.* Un appel entre deux organisations DOIT autoriser l'organisation appelante et son système, et non une personne.
+L'organisation qui reçoit l'appel DOIT vérifier l'identité du système appelant selon IAM-070.
+Une entente écrite entre les deux organisations DOIT fixer ce que le système appelant peut demander.
+Cette règle suit le modèle de link:https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services[GovStack], qui ne transmet aucun jeton de personne entre organisations.
+Chaque organisation reste responsable de ce que fait son propre personnel.
+
+[[IAM-074]]
+*IAM-074.* Chaque clé et chaque certificat d'une charge de travail DOIT avoir une personne responsable et une expiration.
+Ils DOIVENT changer selon SEC-023.
+Un certificat ou un jeton d'une charge de travail DEVRAIT durer au plus 24 heures, avec un renouvellement automatique.
+La clé privée DOIT rester dans un magasin de secrets ou dans du matériel, selon SEC-020.
+L'organisation DOIT tenir un inventaire des identités de ses charges de travail, avec leurs responsables.
+Une courte durée de vie et un inventaire font d'une clé divulguée un incident maîtrisé.
+
+== Références
+
+=== Références informatives
+
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Copie archivée]
+* link:https://spiffe.io/docs/latest/spiffe-about/overview/[SPIFFE Overview], SPIFFE project, Cloud Native Computing Foundation. link:https://web.archive.org/web/20261031214140/https://spiffe.io/docs/latest/spiffe-about/overview/[Copie archivée]
+* link:https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services[GovStack Security Requirements, 7 Authentication and Authorization Services], GovStack, release 25Q3. link:https://web.archive.org/web/20260128021217/https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

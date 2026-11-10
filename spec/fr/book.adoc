@@ -4,4 +4,30 @@
 
 include::index.adoc[leveloffset=+1]
 
+include::assurance.adoc[leveloffset=+1]
+
+include::authentication.adoc[leveloffset=+1]
+
+include::clients.adoc[leveloffset=+1]
+
+include::apis.adoc[leveloffset=+1]
+
+include::sessions.adoc[leveloffset=+1]
+
+include::authorization.adoc[leveloffset=+1]
+
+include::representation.adoc[leveloffset=+1]
+
+include::workloads.adoc[leveloffset=+1]
+
+include::accounts.adoc[leveloffset=+1]
+
+include::events.adoc[leveloffset=+1]
+
+include::errors.adoc[leveloffset=+1]
+
+include::reference-stack.adoc[leveloffset=+1]
+
+include::questions-for-counsel.adoc[leveloffset=+1]
+
 include::glossary.adoc[leveloffset=+1]

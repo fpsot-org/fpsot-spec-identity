@@ -1,0 +1,66 @@
+= Questions for counsel
+include::_fpsot-terms.adoc[]
+
+This page is informative.
+It sets no rule, and it is not legal advice.
+It lists the legal questions that this specification raises but cannot answer.
+A lawyer must answer each one before {abbr-fpsot-first} turns it into a rule.
+An article number marked _to be verified_ comes from a secondary source, not from the law itself.
+
+== Questions
+
+. *Token exchange between organizations.* A token exchange can pass user context from one public body to another.
+Does that disclose personal information, and which authority does it need under the Québec act, chapter A-2.1?
+Which authority does it need under the federal Privacy Act?
+Does it call for a privacy impact assessment?
+The answer decides whether a later version can allow the exchange that IAM-065 forbids today.
+
+. *Scope of the Québec rules.* Public bodies must follow the link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Québec rules on digital identity assurance].
+Can {abbr-fpsot}, a Québec non-profit, count as a provider under contract under article 12 when it supplies a reference stack?
+Article 23 bars an agreement from removing the liability of the public body.
+Does that affect the warranty disclaimers of {abbr-fpsot} licenses?
+
+. *Proof of capacity.* Articles 13 and 14 of the Québec rules require proof of the capacity to act.
+Which evidence meets them for a tutor, a mandatary under a protection mandate and a representative of a business?
+Can a relationship in the authorization engine that points to a stored document meet that need, under IAM-061?
+The Québec shared sign-in service accepts people aged 14 and over.
+Does that age fit the rules of the Civil Code of Québec on the capacity of minors?
+
+. *Biometrics in passkeys.* A passkey often unlocks with a fingerprint or a face, and the template never leaves the device.
+Does that create a database of biometric characteristics?
+If so, must the public body declare it to the Commission d'accès à l'information 60 days before use?
+Law firms cite article 45 of chapter C-1.1 for that duty, _to be verified_.
+Does the passkey need express consent under article 44 of the same act, _to be verified_?
+
+. *Personal information in audit records.* The events of IAM-091 hold `sub`, a session identifier and resource identifiers.
+Do they count as personal information?
+Which rules on keeping and destroying them apply, under article 28 of the Québec rules and other Québec laws?
+
+. *Language of sign-in pages.* {abbr-fpsot} software can show sign-in pages and errors to the public for a Québec public body.
+Does the Charter of the French language, as amended in 2022, set rules for them?
+Do federal rules on official languages impose rules on federal adopters?
+
+. *Licenses of cited texts.* May {abbr-fpsot} quote text from GovStack and from the architecture of the European digital identity wallet?
+May it quote OpenID Final specifications and IETF RFCs?
+Is a mere reference to the OWASP ASVS free of the share-alike duty of its license?
+
+. *Steward under the Cyber Resilience Act.* Public bodies in the European Union may adopt the reference stack.
+Would {abbr-fpsot} then be an open-source software steward for the components it publishes?
+
+. *Naming a product with one main maintainer.* The page xref:reference-stack.adoc[Reference stack] names Topaz.
+Does that create a duty of care, or a risk under the rules on fair procurement?
+Does a named fallback reduce that risk?
+
+== References
+
+=== Informative
+
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

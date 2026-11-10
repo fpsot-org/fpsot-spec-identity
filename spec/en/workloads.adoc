@@ -1,0 +1,56 @@
+= Machine and workload identity
+include::_fpsot-terms.adoc[]
+
+Services call other services, and each call needs to prove which software is calling.
+These rules give each workload its own identity and keep the identity of a person from leaking between services.
+The link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Québec rules on digital identity assurance] also apply to machine identities, in article 29.
+
+== Identity of a workload
+
+[[IAM-070]]
+*IAM-070.* Each workload MUST have its own cryptographic identity.
+The identity MAY be a link:https://spiffe.io/docs/latest/spiffe-about/overview/[SPIFFE] identifier with its certificate or token.
+It MAY instead be a client that the authorization server registers with its own key.
+Two workloads MUST NOT share an identity, and the test and production copies of one workload MUST have different identities.
+Each workload MUST receive only the audiences and scopes that it needs.
+A distinct identity per workload lets an operator revoke one part without stopping the others.
+
+[[IAM-071]]
+*IAM-071.* A call between two services MUST use mutual {abbr-tls-first}, or a token bound to the key of the caller.
+A workload that gets its own token MUST use the client credentials grant with `private_key_jwt` or mutual {abbr-tls}, under IAM-025.
+A call inside one network still crosses a trust boundary, since an attacker inside can reach every service.
+
+[[IAM-072]]
+*IAM-072.* A service MUST NOT pass the {term-access-token} of a person on to another {abbr-api-first}.
+When the next service needs to know the person, the first service MUST exchange the token under IAM-065.
+A token sent onward reaches an audience it was not made for, and that audience can then replay it.
+
+[[IAM-073]]
+*IAM-073.* A call between two organizations MUST authorize the calling organization and its system, not a person.
+The receiving organization MUST check the identity of the calling system under IAM-070.
+A written agreement between the two organizations MUST set what the calling system may ask for.
+This follows the model of link:https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services[GovStack], which passes no user token between organizations.
+Each organization stays responsible for what its own staff do.
+
+[[IAM-074]]
+*IAM-074.* Each key and certificate of a workload MUST have an owner and an expiry, and MUST rotate under SEC-023.
+A certificate or token of a workload SHOULD last 24 hours or less, with automatic renewal.
+The private key MUST stay in a secret store or in hardware, under SEC-020.
+The organization MUST keep an inventory of the identities of its workloads, with their owners.
+A short life and an inventory turn a leaked key into a contained incident.
+
+== References
+
+=== Informative
+
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Archived copy]
+* link:https://spiffe.io/docs/latest/spiffe-about/overview/[SPIFFE Overview], SPIFFE project, Cloud Native Computing Foundation. link:https://web.archive.org/web/20261031214140/https://spiffe.io/docs/latest/spiffe-about/overview/[Archived copy]
+* link:https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services[GovStack Security Requirements, 7 Authentication and Authorization Services], GovStack, release 25Q3. link:https://web.archive.org/web/20260128021217/https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

@@ -1,12 +1,140 @@
 # Comparison data. The format is defined by fpsot-spec-doc (model/jurisdiction.yaml).
-# This example row compares requirement TPL-001. Replace it with the rows of this specification.
-# Add one file per jurisdiction, such as ca.yaml or ca/qc.yaml, only when a source exists.
 topics:
-  keywords: {en: Requirement keywords, fr: Mots clés des exigences}
+  assurance-levels: {en: Assurance levels, fr: Niveaux d’assurance}
+  authenticators: {en: Authenticators, fr: Authentifiants}
+  passwords: {en: Passwords and weak factors, fr: Mots de passe et facteurs faibles}
+  sign-in-flows: {en: Sign-in flows, fr: Flux de connexion}
+  browser-apps: {en: Browser front ends, fr: Interfaces Web}
+  tokens: {en: Tokens at APIs, fr: Jetons dans les API}
+  sessions: {en: Sessions, fr: Sessions}
+  authorization: {en: Authorization, fr: Autorisation}
+  representation: {en: Representation and delegation, fr: Représentation et délégation}
+  workloads: {en: Workload identity, fr: Identité des charges de travail}
+  federation: {en: Federation, fr: Fédération}
 rows:
-  - id: TPL-001
-    topic: keywords
-    requirement: {en: Use the BCP 14 keywords., fr: Utiliser les mots clés du BCP 14.}
-    international: {en: "BCP 14 defines MUST, SHOULD and MAY. Only the capital forms carry that meaning.", fr: "Le BCP 14 définit MUST, SHOULD et MAY. Seules les majuscules ont ce sens."}
-    international_source: {title: "RFC 8174, Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words (BCP 14)", version: "BCP 14", date: "2017-05", url: "https://www.rfc-editor.org/info/rfc8174", archive: "https://web.archive.org/web/20261103005743/https://www.rfc-editor.org/info/rfc8174/"}
-    fpsot: {en: "Keywords in capitals, with a fixed French mapping.", fr: "Mots clés en majuscules, avec une correspondance française fixe."}
+- id: IAM-001
+  topic: assurance-levels
+  requirement: {en: 'Each service declares one of three FPSOT levels from a documented harm assessment, even without sign-in.', fr: 'Chaque service déclare un des trois niveaux FPSOT à partir d’une évaluation documentée du préjudice, même sans connexion.'}
+  international: {en: 'NIST SP 800-63-4 asks each organization to choose an identity, an authentication and a federation level for each service, from a risk assessment.', fr: 'Le NIST SP 800-63-4 demande à chaque organisation de choisir un niveau d’identité, d’authentification et de fédération pour chaque service, à partir d’une évaluation des risques.'}
+  international_source: {title: 'NIST SP 800-63-4, Digital Identity Guidelines', version: Revision 4, date: 2025-07, url: 'https://csrc.nist.gov/pubs/sp/800/63/4/final', archive: 'https://web.archive.org/web/20261010080229/https://csrc.nist.gov/pubs/sp/800/63/4/final'}
+  fpsot: {en: 'Three levels, low, substantial and high, named by acr URIs and mapped to Québec, Canada, the PCTF, eIDAS and NIST.', fr: 'Trois niveaux, faible, substantiel et élevé, nommés par des URI acr et mis en correspondance avec le Québec, le Canada, le CCP, eIDAS et le NIST.'}
+- id: IAM-010
+  topic: authenticators
+  requirement: {en: 'Multifactor authentication at the substantial and high levels, with a phishing-resistant option offered to every person.', fr: 'Authentification multifacteur aux niveaux substantiel et élevé, avec une option résistante à l’hameçonnage offerte à chaque personne.'}
+  international: {en: 'At AAL2, NIST SP 800-63B-4 requires two factors and requires the verifier to offer at least one phishing-resistant option.', fr: 'Au niveau AAL2, le NIST SP 800-63B-4 exige deux facteurs, et exige que le vérificateur offre au moins une option résistante à l’hameçonnage.'}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'Same as AAL2, with passkeys of Web Authentication Level 3 as the usual phishing-resistant option.', fr: 'Comme le niveau AAL2, avec les clés d’accès de Web Authentication Level 3 comme option habituelle résistante à l’hameçonnage.'}
+- id: IAM-011
+  topic: authenticators
+  requirement: {en: 'At the high level, a device-bound hardware key, and no synced passkey.', fr: 'Au niveau élevé, une clé matérielle liée à l’appareil, et aucune clé d’accès synchronisée.'}
+  international: {en: 'NIST SP 800-63B-4 allows syncable authenticators at AAL1 and AAL2 and forbids them at AAL3, which needs a non-exportable key.', fr: 'Le NIST SP 800-63B-4 permet les authentifiants synchronisables aux niveaux AAL1 et AAL2 et les interdit au niveau AAL3, qui exige une clé non exportable.'}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'Synced passkeys accepted for the public at the low and substantial levels, refused at the high level. An organization may refuse them for its staff.', fr: 'Clés d’accès synchronisées acceptées pour le public aux niveaux faible et substantiel, refusées au niveau élevé. Une organisation peut les refuser à son personnel.'}
+- id: IAM-012
+  topic: authenticators
+  requirement: {en: 'Staff sign in with phishing-resistant multifactor authentication, and administrators of identity systems at the high level.', fr: 'Le personnel se connecte avec une authentification multifacteur résistante à l’hameçonnage, et les responsables de l’administration des systèmes d’identité au niveau élevé.'}
+  international: {en: 'NIST SP 800-63B-4 requires US federal agencies to require a phishing-resistant option at AAL2 for their staff, contractors and partners.', fr: 'Le NIST SP 800-63B-4 exige que les organismes fédéraux américains imposent une option résistante à l’hameçonnage au niveau AAL2 à leur personnel, à leurs contractuels et à leurs partenaires.'}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'Phishing-resistant factors required for all staff, and the high level for the administrators of the identity provider and the authorization engine.', fr: 'Facteurs résistants à l’hameçonnage obligatoires pour tout le personnel, et niveau élevé pour les responsables de l’administration du fournisseur d’identité et du moteur d’autorisation.'}
+- id: IAM-013
+  topic: authenticators
+  requirement: {en: 'A choice of at least two kinds of authenticator, and a backup authenticator of the same level.', fr: 'Un choix d’au moins deux sortes d’authentifiants, et un authentifiant de secours du même niveau.'}
+  international: {en: 'NIST SP 800-63B-4 requires each provider to support at least one method of account recovery, such as saved recovery codes or a repeated identity proofing.', fr: 'Le NIST SP 800-63B-4 exige que chaque fournisseur prenne en charge au moins une méthode de récupération, comme des codes de récupération conservés ou une nouvelle vérification de l’identité.'}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'A choice of authenticators at each level, and a backup enrolled before it is needed.', fr: 'Un choix d’authentifiants à chaque niveau, et un dispositif de secours inscrit avant d’en avoir besoin.'}
+- id: IAM-014
+  topic: passwords
+  requirement: {en: 'Passwords of at least 15 characters as a single factor, or 8 within multifactor authentication, with a blocklist and no forced change.', fr: 'Des mots de passe d’au moins 15 caractères comme seul facteur, ou de 8 dans une authentification multifacteur, avec une liste de blocage et sans changement forcé.'}
+  international: {en: 'NIST SP 800-63B-4 sets the same lengths, accepts at least 64 characters, forbids composition rules, periodic changes and security questions, and requires a blocklist.', fr: 'Le NIST SP 800-63B-4 fixe les mêmes longueurs, accepte au moins 64 caractères, interdit les règles de composition, les changements périodiques et les questions secrètes, et exige une liste de blocage.'}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'The rules of NIST SP 800-63B-4 on passwords, without change.', fr: 'Les règles du NIST SP 800-63B-4 sur les mots de passe, sans changement.'}
+- id: IAM-015
+  topic: passwords
+  requirement: {en: 'No codes by text message or voice call except as a chosen fallback, none at the high level, and no email authenticator.', fr: 'Aucun code par SMS ou par appel vocal sauf comme repli choisi, aucun au niveau élevé, et aucun authentifiant par courriel.'}
+  international: {en: NIST SP 800-63B-4 treats codes over the telephone network as a restricted authenticator and forbids email for out-of-band authentication., fr: 'Le NIST SP 800-63B-4 traite les codes transmis par le réseau téléphonique comme un authentifiant restreint, et interdit le courriel pour l’authentification hors bande.'}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'Text message and voice codes discouraged, forbidden at the high level. Email forbidden as an authenticator. Push approvals only with number matching.', fr: 'Codes par SMS et appel vocal déconseillés, interdits au niveau élevé. Courriel interdit comme authentifiant. Approbations par notification seulement avec un nombre à faire correspondre.'}
+- id: IAM-017
+  topic: passwords
+  requirement: {en: 'On a suspected compromise, block the account at once, end its sessions and cancel untrusted actions.', fr: 'Devant une compromission soupçonnée, bloquer le compte immédiatement, mettre fin à ses sessions et annuler les actions douteuses.'}
+  international: {en: NIST SP 800-63B-4 requires a forced change of password when there is evidence of compromise., fr: Le NIST SP 800-63B-4 exige un changement forcé de mot de passe en présence d’une preuve de compromission.}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'Report and notice, an immediate block, revoked sessions and tokens, and a review of the actions of the account.', fr: 'Signalement et avis, blocage immédiat, sessions et jetons révoqués, et revue des actions du compte.'}
+- id: IAM-020
+  topic: sign-in-flows
+  requirement: {en: 'Authorization code flow with the S256 code challenge for every client, and no implicit or password grant.', fr: 'Flux par code d’autorisation avec le défi de code S256 pour chaque client, et aucun octroi implicite ou par mot de passe.'}
+  international: {en: 'RFC 9700 requires the code challenge for public clients, recommends it for confidential ones, forbids the password grant and advises against the implicit grant.', fr: 'Le RFC 9700 exige le défi de code pour les clients publics, le recommande pour les clients confidentiels, interdit l’octroi par mot de passe et déconseille l’octroi implicite.'}
+  international_source: {title: 'RFC 9700, Best Current Practice for OAuth 2.0 Security', version: BCP 240, date: 2025-01, url: 'https://www.rfc-editor.org/info/rfc9700', archive: 'https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/'}
+  fpsot: {en: 'The code challenge for every client, confidential ones included, and no implicit or hybrid flow that returns tokens.', fr: 'Le défi de code pour chaque client, y compris les clients confidentiels, et aucun flux implicite ou hybride qui renvoie des jetons.'}
+- id: IAM-021
+  topic: browser-apps
+  requirement: {en: 'Browser front ends use a backend that keeps every token on the server, with a Secure and HttpOnly cookie.', fr: 'Les interfaces Web emploient un serveur dorsal qui garde chaque jeton sur le serveur, avec un témoin Secure et HttpOnly.'}
+  international: {en: 'RFC 10017 describes several patterns for browser applications and recommends the backend for the front end, with Secure and HttpOnly cookies and a defense against forged requests.', fr: 'Le RFC 10017 décrit plusieurs modèles pour les applications de navigateur et recommande le serveur dorsal dédié, avec des témoins Secure et HttpOnly et une défense contre les requêtes falsifiées.'}
+  international_source: {title: 'RFC 10017, OAuth 2.0 for Browser-Based Applications', version: Best Current Practice, date: 2026-08, url: 'https://www.rfc-editor.org/info/rfc10017', archive: 'https://web.archive.org/web/20261101224723/https://www.rfc-editor.org/info/rfc10017/'}
+  fpsot: {en: 'The backend for the front end is the only pattern allowed, and browser code never holds a token.', fr: 'Le serveur dorsal dédié est le seul modèle permis, et le code du navigateur ne détient jamais de jeton.'}
+- id: IAM-027
+  topic: sign-in-flows
+  requirement: {en: The FAPI 2.0 Security Profile in full at the high level., fr: Le FAPI 2.0 Security Profile au complet au niveau élevé.}
+  international: {en: 'The FAPI 2.0 Security Profile requires pushed authorization requests, the S256 code challenge, sender-constrained tokens and asymmetric client authentication. It applies where an ecosystem adopts it.', fr: 'Le FAPI 2.0 Security Profile exige les demandes d’autorisation poussées, le défi de code S256, des jetons liés à l’expéditeur et une authentification asymétrique des clients. Il s’applique là où un écosystème l’adopte.'}
+  international_source: {title: FAPI 2.0 Security Profile, version: Final, date: '2025-02-22', url: 'https://openid.net/specs/fapi-security-profile-2_0-final.html', archive: 'https://web.archive.org/web/20261005125724/https://openid.net/specs/fapi-security-profile-2_0-final.html'}
+  fpsot: {en: 'Required at the high level, with DPoP for browser front ends and mutual TLS between services. Pushed authorization requests recommended at other levels.', fr: 'Obligatoire au niveau élevé, avec DPoP pour les interfaces Web et le TLS mutuel entre les services. Demandes d’autorisation poussées recommandées aux autres niveaux.'}
+- id: IAM-032
+  topic: tokens
+  requirement: {en: 'Access tokens expire within 15 minutes, or 5 at the high level, and refresh tokens never outlive the session.', fr: 'Les jetons d’accès expirent dans les 15 minutes, ou 5 au niveau élevé, et les jetons d’actualisation ne survivent jamais à la session.'}
+  international: {en: 'RFC 9700 requires refresh tokens of public clients to be sender-constrained or rotated, and sets no lifetime for access tokens.', fr: 'Le RFC 9700 exige que les jetons d’actualisation des clients publics soient liés à l’expéditeur ou renouvelés, et ne fixe aucune durée de vie pour les jetons d’accès.'}
+  international_source: {title: 'RFC 9700, Best Current Practice for OAuth 2.0 Security', version: BCP 240, date: 2025-01, url: 'https://www.rfc-editor.org/info/rfc9700', archive: 'https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/'}
+  fpsot: {en: 'Fixed upper limits on the life of access tokens, plus the rule of RFC 9700 on refresh tokens.', fr: 'Des limites fixes à la durée de vie des jetons d’accès, plus la règle du RFC 9700 sur les jetons d’actualisation.'}
+- id: IAM-040
+  topic: sessions
+  requirement: {en: 'Staff: 12 hours overall and 30 minutes idle, 15 at the high level. Public: 24 hours and 1 hour, or 12 hours and 15 minutes at the high level.', fr: 'Personnel : 12 heures au total et 30 minutes d’inactivité, 15 au niveau élevé. Public : 24 heures et 1 heure, ou 12 heures et 15 minutes au niveau élevé.'}
+  international: {en: 'NIST SP 800-63B-4 recommends reauthentication within 24 hours and after 1 hour idle at AAL2. At AAL3 it requires 12 hours, and recommends 15 minutes idle.', fr: 'Le NIST SP 800-63B-4 recommande une nouvelle authentification dans les 24 heures et après 1 heure d’inactivité au niveau AAL2. Au niveau AAL3, il exige 12 heures et recommande 15 minutes d’inactivité.'}
+  international_source: {title: 'NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63b.html', archive: 'https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html'}
+  fpsot: {en: 'The federal values for staff and the NIST values for the public, as maximums.', fr: 'Les valeurs fédérales pour le personnel et les valeurs du NIST pour le public, comme maximums.'}
+- id: IAM-043
+  topic: sessions
+  requirement: {en: 'A session keeps the level of the service for its whole life, or ends.', fr: 'Une session garde le niveau du service pendant toute sa durée, sinon elle prend fin.'}
+  international: {en: RFC 9470 lets an API ask the client for a stronger or more recent sign-in. It does not require a session to end when its level falls., fr: Le RFC 9470 permet à une API de demander au client une connexion plus forte ou plus récente. Il n’exige pas qu’une session prenne fin quand son niveau baisse.}
+  international_source: {title: 'RFC 9470, OAuth 2.0 Step Up Authentication Challenge Protocol', date: 2023-09, url: 'https://www.rfc-editor.org/info/rfc9470', archive: 'https://web.archive.org/web/20261022232847/https://www.rfc-editor.org/info/rfc9470/'}
+  fpsot: {en: 'The session ends, or a step up happens before the next action, when the level falls below that of the service.', fr: 'La session prend fin, ou une authentification renforcée a lieu avant la prochaine action, quand le niveau tombe sous celui du service.'}
+- id: IAM-050
+  topic: authorization
+  requirement: {en: 'Services call one authorization engine through OpenID AuthZEN, and deny by default.', fr: 'Les services appellent un moteur d’autorisation par OpenID AuthZEN, et refusent par défaut.'}
+  international: {en: 'AuthZEN 1.0 defines the call from an enforcement point to a decision point over HTTPS, with evaluation, batch and search APIs and optional metadata.', fr: 'AuthZEN 1.0 définit l’appel d’un point d’application à un point de décision sur HTTPS, avec des API d’évaluation, de lots et de recherche, et des métadonnées facultatives.'}
+  international_source: {title: OpenID AuthZEN Authorization API 1.0, version: Final, date: '2026-01-11', url: 'https://openid.net/specs/authorization-api-1_0-final.html', archive: 'https://web.archive.org/web/20260418221715/https://openid.net/specs/authorization-api-1_0-final.html'}
+  fpsot: {en: 'AuthZEN evaluation required between every service and the engine, with plain Rego policies and exportable relationships.', fr: 'Évaluation AuthZEN obligatoire entre chaque service et le moteur, avec des politiques en Rego simple et des relations exportables.'}
+- id: IAM-061
+  topic: representation
+  requirement: {en: 'Each representation is a relationship in the authorization engine, with its kind, scope, period and a reference to the proof of capacity.', fr: 'Chaque représentation est une relation dans le moteur d’autorisation, avec sa sorte, sa portée, sa période et une référence à la preuve de capacité.'}
+  international: {en: 'RFC 8693 lets a token name an acting party in the act claim, beside the subject. It sets no rule on proof of capacity or on the limits of a representation.', fr: 'Le RFC 8693 permet à un jeton de nommer une partie agissante dans la revendication act, à côté du sujet. Il ne fixe aucune règle sur la preuve de capacité ni sur les limites d’une représentation.'}
+  international_source: {title: 'RFC 8693, OAuth 2.0 Token Exchange', date: 2020-01, url: 'https://www.rfc-editor.org/info/rfc8693', archive: 'https://web.archive.org/web/20261101164937/https://www.rfc-editor.org/info/rfc8693/'}
+  fpsot: {en: 'A full model of representation: relationships with scope and end date, the represented party in each decision, and grants by the representative of a business.', fr: 'Un modèle complet de représentation : des relations avec portée et date de fin, la partie représentée dans chaque décision, et les accès donnés par la personne qui représente une entreprise.'}
+- id: IAM-065
+  topic: representation
+  requirement: {en: 'Token exchange only within one organization, into a narrower token that names the person and the acting service.', fr: 'Échange de jetons seulement au sein d’une organisation, vers un jeton plus étroit qui nomme la personne et le service qui agit.'}
+  international: {en: 'RFC 8693 defines token exchange for delegation and impersonation, and leaves its limits to each deployment.', fr: 'Le RFC 8693 définit l’échange de jetons pour la délégation et l’usurpation d’identité, et laisse ses limites à chaque déploiement.'}
+  international_source: {title: 'RFC 8693, OAuth 2.0 Token Exchange', date: 2020-01, url: 'https://www.rfc-editor.org/info/rfc8693', archive: 'https://web.archive.org/web/20261101164937/https://www.rfc-editor.org/info/rfc8693/'}
+  fpsot: {en: 'Delegation with an act claim inside one organization. No impersonation without act, and no exchange between organizations in this version.', fr: 'Délégation avec une revendication act au sein d’une organisation. Aucune usurpation sans act, et aucun échange entre organisations dans cette version.'}
+- id: IAM-070
+  topic: workloads
+  requirement: {en: 'Each workload has its own cryptographic identity, separate for test and production.', fr: 'Chaque charge de travail a sa propre identité cryptographique, distincte pour le test et la production.'}
+  international: {en: 'SPIFFE gives each workload an identifier and a short-lived, signed identity document, such as an X.509 certificate.', fr: 'SPIFFE donne à chaque charge de travail un identifiant et un document d’identité signé et de courte durée, comme un certificat X.509.'}
+  international_source: {title: SPIFFE Overview, url: 'https://spiffe.io/docs/latest/spiffe-about/overview/', archive: 'https://web.archive.org/web/20261031214140/https://spiffe.io/docs/latest/spiffe-about/overview/'}
+  fpsot: {en: 'A SPIFFE identity or a registered client key, rotated, short-lived and in an inventory.', fr: 'Une identité SPIFFE ou une clé de client inscrite, changée, de courte durée et inscrite à un inventaire.'}
+- id: IAM-073
+  topic: workloads
+  requirement: {en: 'Calls between organizations authorize the calling organization and system, never a person.', fr: 'Les appels entre organisations autorisent l’organisation et le système appelants, jamais une personne.'}
+  international: {en: 'The GovStack security requirements pass no user token or role between organizations, and set access between organizations at the level of the organization.', fr: 'Les exigences de sécurité de GovStack ne transmettent aucun jeton ni rôle de personne entre organisations, et fixent l’accès entre organisations au niveau de l’organisation.'}
+  international_source: {title: 'GovStack Security Requirements, 7 Authentication and Authorization Services', version: 25Q3, url: 'https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services', archive: 'https://web.archive.org/web/20260128021217/https://specs.govstack.global/overview/25q3/security-requirements/7-auth-services'}
+  fpsot: {en: 'The GovStack model, with a written agreement that sets what the calling system may ask for.', fr: 'Le modèle de GovStack, avec une entente écrite qui fixe ce que le système appelant peut demander.'}
+- id: IAM-085
+  topic: federation
+  requirement: {en: An outside identity provider only under a written agreement and a prior risk analysis that impose the level of the service., fr: Un fournisseur d’identité externe seulement selon une entente écrite et une analyse de risques préalable qui imposent le niveau du service.}
+  international: {en: 'At FAL2, NIST SP 800-63C-4 requires a trust agreement set up in advance between the identity provider and the relying party.', fr: 'Au niveau FAL2, le NIST SP 800-63C-4 exige une entente de confiance établie à l’avance entre le fournisseur d’identité et la partie utilisatrice.'}
+  international_source: {title: 'NIST SP 800-63C-4, Digital Identity Guidelines: Federation and Assertions', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63c.html', archive: 'https://web.archive.org/web/20261102062053/https://pages.nist.gov/800-63-4/sp800-63c.html'}
+  fpsot: {en: 'A written agreement, a risk analysis with a privacy impact assessment, and levels mapped through the published table.', fr: 'Une entente écrite, une analyse de risques avec une évaluation des facteurs relatifs à la vie privée, et des niveaux mis en correspondance par le tableau publié.'}
+- id: IAM-086
+  topic: federation
+  requirement: {en: 'Assertions from an outside identity provider are signed, for one audience, protected against replay and free of personal information in identifiers.', fr: 'Les assertions d’un fournisseur d’identité externe sont signées, destinées à un seul public, protégées contre le rejeu et sans renseignements personnels dans les identifiants.'}
+  international: {en: 'At FAL2, NIST SP 800-63C-4 requires one relying party per assertion, replay protection and protection against injected assertions. It forbids plaintext personal information in federated identifiers.', fr: 'Au niveau FAL2, le NIST SP 800-63C-4 exige une seule partie utilisatrice par assertion, une protection contre le rejeu et contre l’injection d’assertions. Il interdit les renseignements personnels en clair dans les identifiants fédérés.'}
+  international_source: {title: 'NIST SP 800-63C-4, Digital Identity Guidelines: Federation and Assertions', version: Revision 4, date: 2025-07, url: 'https://pages.nist.gov/800-63-4/sp800-63c.html', archive: 'https://web.archive.org/web/20261102062053/https://pages.nist.gov/800-63-4/sp800-63c.html'}
+  fpsot: {en: 'The checks of FAL2, with no rise of level when an account links a weaker outside identity. No fixed lifetime for assertions.', fr: 'Les vérifications du niveau FAL2, sans hausse de niveau quand un compte lie une identité externe plus faible. Aucune durée de vie fixe pour les assertions.'}

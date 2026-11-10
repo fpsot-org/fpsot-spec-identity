@@ -1,0 +1,77 @@
+= Représentation et délégation
+include::_fpsot-terms.adoc[]
+
+Les gens agissent souvent pour une autre personne, comme un parent pour un enfant ou un employé pour une entreprise.
+Ces règles fixent comment un service sait qui agit, pour qui, et dans quelles limites.
+Au Québec, les articles 13 à 16 des link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[règles sur l'identité numérique] exigent ici une preuve de la capacité d'agir.
+Aucun service canadien partagé ne prend encore en charge la représentation.
+Le link:https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services[service fédéral de connexion] ajoutera la délégation seulement après 2028, à la fin de son financement actuel.
+Cette page comble ce vide avec un modèle que tout service peut adopter dès maintenant.
+
+== Chaque personne agit en son nom
+
+[[IAM-060]]
+*IAM-060.* Chaque personne DOIT se connecter avec son propre compte, et un compte DOIT appartenir à une seule personne.
+Un service NE DOIT PAS offrir de compte partagé, même pour une entreprise ou une équipe.
+Une entreprise ou un organisme public agit seulement par les personnes qui le représentent.
+Les règles du Québec énoncent le même principe d'un compte par personne.
+Un compte partagé cache qui a fait quoi, et la piste d'audit perd sa valeur.
+
+== Relations de représentation
+
+[[IAM-061]]
+*IAM-061.* Chaque représentation DOIT être une relation dans le {term-authorization-engine}, de la personne représentante à la partie représentée.
+Elle DOIT indiquer sa sorte, comme tutelle ou mandat, avec sa portée, son début et sa fin.
+Elle DOIT contenir une référence à la preuve de capacité, comme une décision d'un tribunal ou un mandat.
+Pour une entreprise, la preuve PEUT être une inscription au registre des entreprises du Québec.
+Elle DOIT aussi consigner qui a vérifié cette preuve, et quand.
+Une revendication de jeton ne peut pas suivre une portée ou une date de fin qui change après la connexion.
+
+[[IAM-062]]
+*IAM-062.* La partie représentée DOIT être une `Party` selon DMO-040, soit une personne, soit une organisation.
+Le service DEVRAIT garder chaque représentation comme une `PartyRelationship` selon DMO-044, avec sa période.
+Il DEVRAIT tirer les relations du moteur de ces enregistrements.
+Un seul enregistrement du fait d'affaires alimente alors les dossiers et les décisions d'accès.
+
+[[IAM-063]]
+*IAM-063.* Le service vérifie la capacité de la personne qui représente une entreprise.
+Cette personne DOIT pouvoir donner à d'autres personnes l'accès au compte de l'entreprise, et le leur retirer.
+Un accès donné NE DOIT PAS dépasser la portée de la personne qui le donne.
+Chaque accès donné DOIT être sa propre relation selon IAM-061, avec une référence à la personne représentante qui l'a donné.
+Les règles du Québec rendent cette personne responsable de la gestion des accès au compte de l'entreprise.
+
+[[IAM-064]]
+*IAM-064.* Une personne qui en représente une autre DOIT choisir, dans la session, la partie pour laquelle elle agit.
+Le service DOIT afficher ce choix sur chaque page.
+Chaque requête DOIT transmettre la partie représentée au moteur, dans les propriétés du sujet ou le contexte de l'évaluation.
+Le moteur DOIT refuser quand aucune relation valide ne couvre l'action.
+Un choix visible évite qu'une personne agisse par erreur pour le mauvais enfant ou la mauvaise entreprise.
+
+== Échange de jetons
+
+[[IAM-065]]
+*IAM-065.* Au sein d'une même organisation, un service PEUT échanger le jeton d'une personne contre un nouveau jeton.
+Le nouveau jeton DOIT suivre le link:https://www.rfc-editor.org/info/rfc8693[RFC 8693], avec un public plus étroit et moins de portées.
+Sa revendication `sub` DOIT nommer la personne, et sa revendication `act` DOIT nommer le service qui agit.
+Un service NE DOIT PAS obtenir un jeton qui nomme une personne sans revendication `act` à son propre nom.
+Un échange de jetons d'une organisation à une autre NE DOIT PAS avoir lieu dans cette version.
+Ce passage entre organismes publics est une question juridique, inscrite sur la page xref:questions-for-counsel.adoc[Questions pour le conseiller juridique].
+
+== Références
+
+=== Références normatives
+
+* link:https://www.rfc-editor.org/info/rfc8693[RFC 8693, OAuth 2.0 Token Exchange], IETF, 2020-01. link:https://web.archive.org/web/20261101164937/https://www.rfc-editor.org/info/rfc8693/[Copie archivée]
+
+=== Références informatives
+
+* link:https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services[Canada begins gradual rollout of SSO for digital government services], Biometric Update, 2026-10-01. link:https://web.archive.org/web/20261002033142/https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services[Copie archivée]
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

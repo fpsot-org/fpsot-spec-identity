@@ -1,15 +1,86 @@
-= Guide
-:page-type: explanation
+= Sécuriser un nouveau service
+:page-type: how-to
 include::_fpsot-terms.adoc[]
 
-Cette page explique la spécification aux personnes qui l’adoptent.
-Chaque page de guide a un seul type.
-C’est un tutoriel, un guide pratique, une référence ou une explication.
+Ce guide mène une équipe d'un nouveau service public à une connexion et à une {abbr-api-first} qui respectent cette spécification.
+Chaque étape cite la règle qu'elle respecte.
+L'exemple est un service où une personne dépose une demande pour une entreprise.
+
+== Choisir le niveau
+
+Évaluez le préjudice qu'une identité erronée causerait à la confidentialité, à l'intégrité et à la disponibilité des données, selon IAM-001.
+Une demande pour une entreprise qui contient des données financières convient au niveau `substantial`.
+Vérifiez la correspondance de votre gouvernement dans `registry/assurance-levels.yaml`, selon IAM-003.
+Au Québec, ce service se situe au niveau ID2 ou ID3.
+Au niveau ID3, les codes par SMS ne sont pas permis.
+Prévoyez donc des clés d'accès et des applications d'authentification.
+
+== Configurer la connexion
+
+Configurez le {term-identity-provider} pour exiger l'authentification multifacteur et offrir les clés d'accès, selon IAM-010.
+Laissez chaque personne inscrire un deuxième authentifiant, selon IAM-013.
+Inscrivez le serveur dorsal de l'interface comme client confidentiel avec `private_key_jwt`, selon IAM-025.
+Mettez seulement l'identifiant d'émetteur dans le `aud` de son assertion de client.
+Demandez le niveau dans `acr_values`, et vérifiez `acr` dans le jeton d'identité, selon IAM-023.
+
+== Construire le serveur dorsal de l'interface
+
+Gardez les jetons sur le serveur, selon IAM-021.
+Donnez au navigateur un seul témoin, marqué `Secure` et `HttpOnly`, avec `SameSite=Strict`.
+Fixez les délais de session pour le public : 24 heures au total et 1 heure d'inactivité, selon IAM-040.
+Employez RP-Initiated Logout et Back-Channel Logout, selon IAM-042.
+
+== Protéger l'API
+
+Acceptez seulement les jetons dont le `aud` nomme votre {abbr-api}, selon IAM-030.
+Publiez les métadonnées de votre {abbr-api} à `/.well-known/oauth-protected-resource`, selon IAM-033.
+Pour une opération qui exige le niveau `high`, répondez comme ci-dessous quand le jeton ne suffit pas, selon IAM-034.
+
+[source,http]
+----
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high"
+Content-Type: application/problem+json
+
+{
+  "type": "https://fpsot.org/problems/identity/insufficient-user-authentication",
+  "title": "Une connexion plus forte ou plus récente est nécessaire.",
+  "status": 401,
+  "acrValues": ["https://fpsot.org/assurance-levels/high"]
+}
+----
+
+== Consulter le moteur d'autorisation
+
+À chaque requête, envoyez une évaluation au {term-authorization-engine} par AuthZEN, selon IAM-050.
+Nommez la personne et la demande par des identifiants opaques, selon IAM-057.
+Transmettez dans le contexte l'entreprise pour laquelle la personne agit, selon IAM-064.
+
+[source,json]
+----
+{
+  "subject": {"type": "user", "id": "u-7f3c2a"},
+  "action": {"name": "submit"},
+  "resource": {"type": "request", "id": "r-1029"},
+  "context": {"representedPartyId": "p-55e0"}
+}
+----
+
+Refusez quand la réponse est `false`, quand le moteur échoue, ou quand il tarde, selon IAM-051.
+Conservez dans le moteur la relation « représentant de cette entreprise », selon IAM-061.
+Donnez-lui une portée, une date de fin et une référence à sa preuve.
+
+== Consigner les événements
+
+Émettez `org.fpsot.identity.access.evaluated` pour chaque décision, selon IAM-092.
+Nommez la personne et l'entreprise seulement par leurs identifiants opaques, selon IAM-093.
+La spécification FPSOT sur l'observabilité fixe comment conserver ces événements.
 
 == Historique du document
 
 [cols="1,1,4",options="header"]
 |===
 |Version |Date |Changement
-|0.1.0 |2026-11-03 |Première version.
+|0.1.0 |2026-11-10 |Première version.
 |===

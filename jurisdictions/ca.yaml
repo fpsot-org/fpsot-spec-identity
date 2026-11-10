@@ -1,0 +1,33 @@
+code: CA
+name: {en: Canada, fr: Canada}
+rows:
+- id: IAM-011
+  text: {en: 'For internal Government of Canada users, the guideline does not permit synced passkeys at credential level 4, and not at level 3 for now. Level 4 allows device-bound passkeys only.', fr: 'Pour les utilisateurs internes du gouvernement du Canada, la ligne directrice ne permet pas les clés d’accès synchronisées au niveau 4, ni pour l’instant au niveau 3. Le niveau 4 permet seulement les clés liées à l’appareil.'}
+  status: same
+  source: {title: 'Treasury Board of Canada Secretariat, Guideline on Multi-Factor Authentication (MFA): Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain', url: 'https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html', archive: 'https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html'}
+  last_checked: "2026-11-10"
+- id: IAM-012
+  text: {en: 'The guideline strongly recommends phishing-resistant authenticators for typical users at level 3, and requires one at level 4 for privileged users. Phishing resistance is not required for every staff member.', fr: 'La ligne directrice recommande fortement des authentifiants résistants à l’hameçonnage pour les utilisateurs habituels au niveau 3, et en exige un au niveau 4 pour les utilisateurs privilégiés. La résistance à l’hameçonnage n’est pas exigée de tout le personnel.'}
+  status: looser
+  source: {title: 'Treasury Board of Canada Secretariat, Guideline on Multi-Factor Authentication (MFA): Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain', url: 'https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html', archive: 'https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html'}
+  last_checked: "2026-11-10"
+- id: IAM-015
+  text: {en: 'The guideline does not recommend codes by text message as a second factor, whether or not the government manages the device.', fr: 'La ligne directrice ne recommande pas les codes par SMS comme deuxième facteur, que le gouvernement gère l’appareil ou non.'}
+  status: same
+  source: {title: 'Treasury Board of Canada Secretariat, Guideline on Multi-Factor Authentication (MFA): Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain', url: 'https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html', archive: 'https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html'}
+  last_checked: "2026-11-10"
+- id: IAM-040
+  text: {en: 'For internal users, the guideline requires reauthentication at least every 12 hours, and after 30 minutes idle at level 3 or 15 minutes at level 4.', fr: 'Pour les utilisateurs internes, la ligne directrice exige une nouvelle authentification au moins toutes les 12 heures, et après 30 minutes d’inactivité au niveau 3 ou 15 minutes au niveau 4.'}
+  status: same
+  source: {title: 'Treasury Board of Canada Secretariat, Guideline on Multi-Factor Authentication (MFA): Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain', url: 'https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html', archive: 'https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html'}
+  last_checked: "2026-11-10"
+- id: IAM-086
+  text: {en: The guidance requires cross-domain assertions to expire within 5 minutes and forbids bearer assertions at level 4. FPSOT sets no lifetime for assertions. The guidance still rests on NIST SP 800-63-2., fr: Le guide exige que les assertions entre domaines expirent dans les 5 minutes et interdit les assertions au porteur au niveau 4. La FPSOT ne fixe aucune durée de vie pour les assertions. Le guide repose encore sur le NIST SP 800-63-2.}
+  status: stricter
+  source: {title: 'Canadian Centre for Cyber Security, User authentication guidance for information technology systems (ITSP.30.031 v3)', version: v3, date: 2018-04, url: 'https://www.cyber.gc.ca/en/guidance/user-authentication-guidance-information-technology-systems-itsp30031-v3', archive: 'https://web.archive.org/web/20261020014711/https://www.cyber.gc.ca/en/guidance/user-authentication-guidance-information-technology-systems-itsp30031-v3'}
+  last_checked: "2026-11-10"
+- id: IAM-061
+  text: {en: 'The federal sign-in service, CanadaLogin, plans business profiles and delegation only after its current funding ends in early 2028. No federal service offers representation today.', fr: 'Le service fédéral de connexion, CanadaLogin, prévoit les profils d’entreprise et la délégation seulement après la fin de son financement actuel, au début de 2028. Aucun service fédéral n’offre la représentation aujourd’hui.'}
+  status: not-covered
+  source: {title: 'Biometric Update, Canada begins gradual rollout of SSO for digital government services (secondary source on CanadaLogin)', date: '2026-10-01', url: 'https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services', archive: 'https://web.archive.org/web/20261002033142/https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services'}
+  last_checked: "2026-11-10"

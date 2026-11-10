@@ -1,0 +1,78 @@
+= Comptes, fédération et approvisionnement
+include::_fpsot-terms.adoc[]
+
+Ces règles couvrent la vie d'un compte, de sa création à sa suppression.
+Elles fixent aussi quand un service peut faire confiance à un {term-identity-provider} externe.
+
+== Approvisionnement
+
+[[IAM-080]]
+*IAM-080.* Une application DOIT lire les comptes dans les jetons seulement, ou garder une copie locale alimentée par le fournisseur.
+Une application qui garde une copie locale DOIT accepter l'approvisionnement par link:https://www.rfc-editor.org/info/rfc7644[SCIM 2.0], avec les schémas du link:https://www.rfc-editor.org/info/rfc7643[RFC 7643].
+Elle DEVRAIT prendre en charge la pagination par curseur du link:https://www.rfc-editor.org/info/rfc9865[RFC 9865] pour les grands annuaires.
+Une copie locale que personne ne met à jour garde les accès des personnes parties.
+
+[[IAM-081]]
+*IAM-081.* Quand une personne part, ou quand l'organisation suspend un compte, le fournisseur d'identité DOIT le désactiver immédiatement.
+Il DOIT mettre fin à ses sessions et révoquer ses jetons d'actualisation.
+Chaque application qui a une copie locale DOIT recevoir le changement dans un délai de 1 heure.
+L'organisation DEVRAIT transmettre le changement par SCIM 2.0, ou comme événement de l'link:https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html[OpenID Shared Signals Framework 1.0].
+Une ancienne employée ou un ancien employé qui garde un accès est une cause fréquente de brèches.
+
+[[IAM-082]]
+*IAM-082.* Le fournisseur d'identité DOIT tenir un registre de chaque compte.
+Le registre DOIT consigner la création, la suspension, la récupération, le maintien, la révocation et le renouvellement du compte.
+L'organisation DOIT revoir le registre au moins une fois par année.
+Les événements de la page xref:events.adoc[Événements d'identité et d'accès] alimentent ce registre.
+Les règles du Québec exigent un tel registre, revu chaque année.
+
+[[IAM-083]]
+*IAM-083.* Le fournisseur d'identité DOIT renouveler les preuves d'identité de chaque compte tous les 36 mois au niveau `substantial`.
+Au niveau `high`, il DOIT les renouveler au moins tous les 12 mois.
+Quand le gouvernement fixe un délai plus court, comme 18 mois pour le niveau ID3 du Québec, ce délai s'applique.
+Sans renouvellement à temps, le compte DOIT repasser la vérification de l'identité avant d'atteindre son niveau.
+Les preuves vieillissent, et la situation d'une personne change.
+
+[[IAM-084]]
+*IAM-084.* Une organisation DEVRAIT revoir les rôles et les relations de son personnel au moins une fois par année.
+Elle DEVRAIT revoir ceux des responsables de l'administration tous les 90 jours.
+Les gens changent de poste, et les anciens droits restent tant que personne ne les retire.
+
+== Fédération
+
+[[IAM-085]]
+*IAM-085.* Un service DOIT accepter un fournisseur d'identité externe seulement selon une entente écrite et une analyse de risques préalable.
+L'analyse DOIT comprendre une évaluation des facteurs relatifs à la vie privée.
+L'entente DOIT imposer le niveau du service selon IAM-001, et NE DOIT PAS l'abaisser.
+Le service DOIT faire correspondre les niveaux du fournisseur externe au moyen de `registry/assurance-levels.yaml`, selon IAM-003.
+Les link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[règles du Québec sur l'assurance de l'identité numérique] fixent les mêmes conditions, à l'article 23.
+
+[[IAM-086]]
+*IAM-086.* Une assertion d'un fournisseur d'identité externe DOIT porter une signature et nommer le service comme seul public.
+Elle DOIT résister au rejeu.
+Elle NE DOIT PAS porter de renseignements personnels dans l'identifiant de la personne.
+Ces vérifications correspondent au niveau de fédération FAL2 du link:https://pages.nist.gov/800-63-4/sp800-63c.html[NIST SP 800-63C-4].
+Un service NE DOIT PAS relever le niveau d'un compte quand il y lie une identité externe d'un niveau inférieur.
+Sans cette limite, un compte externe faible pourrait prendre le contrôle d'un compte local fort.
+
+== Références
+
+=== Références normatives
+
+* link:https://www.rfc-editor.org/info/rfc7643[RFC 7643, System for Cross-domain Identity Management: Core Schema], IETF, 2015-09. link:https://web.archive.org/web/20261027095155/https://www.rfc-editor.org/info/rfc7643/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc7644[RFC 7644, System for Cross-domain Identity Management: Protocol], IETF, 2015-09. link:https://web.archive.org/web/20261102080228/https://www.rfc-editor.org/info/rfc7644/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9865[RFC 9865, Cursor-Based Pagination of System for Cross-domain Identity Management (SCIM) Resources], IETF, 2025. link:https://web.archive.org/web/20260810070922/https://www.rfc-editor.org/info/rfc9865/[Copie archivée]
+* link:https://pages.nist.gov/800-63-4/sp800-63c.html[NIST SP 800-63C-4, Digital Identity Guidelines: Federation and Assertions], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261102062053/https://pages.nist.gov/800-63-4/sp800-63c.html[Copie archivée]
+
+=== Références informatives
+
+* link:https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html[OpenID Shared Signals Framework Specification 1.0], OpenID Foundation, Final, 2025-08-29. link:https://web.archive.org/web/20260930042256/https://openid.net/specs/openid-sharedsignals-framework-1_0-final.html[Copie archivée]
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===
