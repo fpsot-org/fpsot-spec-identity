@@ -47,17 +47,17 @@ Quand une personne agit pour une autre, l'événement DOIT aussi nommer la parti
 Après un échange de jetons, il DOIT nommer chaque acteur de la chaîne `act`.
 Un événement sur un travail délégué qui nomme une seule partie ne peut pas montrer qui est responsable.
 
-L'identifiant de session DOIT être une valeur opaque distincte, comme le `sid` d'OpenID Connect ou une empreinte à clé.
+L'identifiant de session DOIT être une valeur opaque distincte, comme le `sid` d'OpenID Connect ou un condensé à clé.
 Il NE DOIT PAS être la valeur du témoin de connexion d'IAM-041.
 Sinon, toute personne qui lit le journal pourrait prendre le contrôle de la session.
 
 [[IAM-092]]
 *IAM-092.* Chaque événement `access.evaluated` DOIT contenir le sujet, l'action et la ressource, par type et identifiant opaque.
 Il DOIT aussi contenir la décision, la version de la politique selon IAM-053 et l'identifiant du moteur.
-Il DOIT contenir une empreinte à clé (HMAC) du contexte de la requête, et non le contexte lui-même.
+Il DOIT contenir un condensé à clé (HMAC) du contexte de la requête, et non le contexte lui-même.
 Chaque décision DOIT produire un événement, qu'elle permette ou refuse.
 Les décisions montrent les raisons d'un accès, qu'aucun autre enregistrement ne contient.
-Une simple empreinte d'un petit contexte se devine, alors qu'une empreinte à clé résiste sans la clé.
+Un simple condensé d'un petit contexte se devine, alors qu'un condensé à clé résiste sans la clé.
 
 [[IAM-093]]
 *IAM-093.* Un événement NE DOIT PAS contenir de mot de passe, code, jeton, assertion de client, témoin ou clé.
