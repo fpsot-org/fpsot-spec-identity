@@ -92,7 +92,7 @@ One name for each field lets one query find an actor or a session across every p
 |Session |`org.fpsot.identity.session.id`
 |Level |`org.fpsot.identity.assurance.level`
 |Represented party |`org.fpsot.identity.represented_party.id`
-|`act` chain |`org.fpsot.identity.act_chain`, a list of opaque identifiers
+|`act` chain |`org.fpsot.identity.act_chain.actor_ids`, a list of opaque identifiers
 |Outcome |`org.fpsot.outcome`
 |===
 

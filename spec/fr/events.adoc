@@ -92,7 +92,7 @@ Un seul nom par champ permet à une requête de trouver un acteur ou une session
 |Session |`org.fpsot.identity.session.id`
 |Niveau |`org.fpsot.identity.assurance.level`
 |Partie représentée |`org.fpsot.identity.represented_party.id`
-|Chaîne `act` |`org.fpsot.identity.act_chain`, une liste d'identifiants opaques
+|Chaîne `act` |`org.fpsot.identity.act_chain.actor_ids`, une liste d'identifiants opaques
 |Résultat |`org.fpsot.outcome`
 |===
 
