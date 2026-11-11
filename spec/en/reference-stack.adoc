@@ -1,0 +1,82 @@
+= Reference stack
+include::_fpsot-terms.adoc[]
+
+This page is informative.
+It sets no rule, and no rule of this specification requires a product named here.
+It names the open-source products that {abbr-fpsot-first} uses to build and test its own reference implementation.
+Any product that meets the rules can take their place.
+
+== Products and versions
+
+The reference {term-identity-provider} is link:https://github.com/keycloak/keycloak/blob/e514445f9dcdabc5bdcf67cab56c1e49655de067/docs/documentation/release_notes/topics/26_8_0.adoc[Keycloak 26.8.2], released on 5 November 2026.
+Keycloak is a project of the link:https://www.cncf.io/projects/keycloak/[Cloud Native Computing Foundation] at the incubating level, under the Apache License 2.0.
+Its supported features include FAPI 2.0, DPoP, passkeys, organizations, token exchange and, since version 26.8, SCIM.
+Token exchange with an `act` claim, the delegation that IAM-065 depends on, is still a preview feature in version 26.8.
+
+Its own authorization features serve only the coarse access of IAM-052.
+Its AuthZEN endpoint is experimental, and the reference stack does not use it as the engine.
+
+The reference {term-authorization-engine} is link:https://github.com/aserto-dev/topaz/blob/2049f1a24cfa44b1732bf3deea865f0543de07c9/README.md[Topaz v0.33.26], released on 6 November 2026.
+It combines policies in Rego, a directory of relationships and a native AuthZEN interface, under the Apache License 2.0.
+Topaz has not reached version 1.0, and no foundation hosts it.
+The link:https://www.aserto.com/blog/the-final-chapter-for-aserto[company that started it] wound down in 2025.
+One maintainer wrote most of its recent changes.
+
+IAM-050, IAM-054 and IAM-055 keep that risk small.
+Policies and relationships can move to another engine.
+{abbr-fpsot} tracks each release of Topaz and checks it against these rules.
+
+The named fallback is link:https://openfga.dev/[OpenFGA] for relationships, with the link:https://www.openpolicyagent.org/[Open Policy Agent] for policies in Rego.
+OpenFGA is a project of the Cloud Native Computing Foundation at the incubating level, and its AuthZEN support is experimental.
+The Open Policy Agent is a graduated project of the same foundation.
+A move from Topaz splits in two.
+The policies go to the Open Policy Agent, and the relationships go to OpenFGA.
+
+The reference framework is Quarkus 3.40, a long-term support stream, with its link:https://quarkus.io/guides/security-oidc-code-flow-authentication[OpenID Connect extension].
+Its web application mode acts as the backend of a browser front end, under IAM-021.
+Its service mode checks tokens at an {abbr-api-first}, under IAM-030 to IAM-036.
+Quarkus 4 is in beta, and the reference stack will move to it after a stable release.
+
+== How the parts fit
+
+[source,plantuml]
+----
+@startuml
+actor Person
+node "Browser" as B
+node "Backend for the front end\n(Quarkus, web application mode)" as BFF
+node "API\n(Quarkus, service mode)" as API
+node "Identity provider\n(Keycloak)" as IDP
+node "Authorization engine\n(Topaz)" as PDP
+Person --> B
+B --> BFF : session cookie
+BFF --> IDP : OpenID Connect, code flow
+BFF --> API : access token bound with DPoP
+API --> PDP : AuthZEN evaluation
+IDP ..> API : signing keys
+@enduml
+----
+
+The diagram shows a person who signs in through the browser.
+The backend holds the tokens and calls the {abbr-api} with a bound token.
+The {abbr-api} asks the engine for each decision over AuthZEN.
+
+== References
+
+=== Informative
+
+* link:https://github.com/keycloak/keycloak/blob/e514445f9dcdabc5bdcf67cab56c1e49655de067/docs/documentation/release_notes/topics/26_8_0.adoc[Keycloak release notes 26.8.0, at the tag 26.8.2], Keycloak project, 2026-11-05. Pinned to a commit.
+* link:https://www.cncf.io/projects/keycloak/[Keycloak], Cloud Native Computing Foundation. link:https://web.archive.org/web/20261018171542/https://www.cncf.io/projects/keycloak/[Archived copy]
+* link:https://github.com/aserto-dev/topaz/blob/2049f1a24cfa44b1732bf3deea865f0543de07c9/README.md[Topaz README, at the tag v0.33.26], Topaz project, 2026-11-06. Pinned to a commit.
+* link:https://www.aserto.com/blog/the-final-chapter-for-aserto[The final chapter for Aserto], Aserto, 2025-04-27. link:https://web.archive.org/web/20261005080423/https://www.aserto.com/blog/the-final-chapter-for-aserto[Archived copy]
+* link:https://openfga.dev/[OpenFGA], OpenFGA project, Cloud Native Computing Foundation. link:https://web.archive.org/web/20261101092629/https://openfga.dev/[Archived copy]
+* link:https://www.openpolicyagent.org/[Open Policy Agent], Open Policy Agent project, Cloud Native Computing Foundation. link:https://web.archive.org/web/20261105025955/https://www.openpolicyagent.org/[Archived copy]
+* link:https://quarkus.io/guides/security-oidc-code-flow-authentication[OpenID Connect authorization code flow mechanism for protecting web applications], Quarkus project. link:https://web.archive.org/web/20260411205552/https://quarkus.io/guides/security-oidc-code-flow-authentication[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

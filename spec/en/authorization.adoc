@@ -1,0 +1,87 @@
+= Authorization
+include::_fpsot-terms.adoc[]
+
+Authorization decides what a person or a service may do with each resource.
+These rules keep that decision in one {term-authorization-engine}, behind a standard interface.
+An agency can then change engines without rewriting its services.
+The model follows the decision point and the enforcement point of link:https://csrc.nist.gov/pubs/sp/800/162/upd2/final[NIST SP 800-162].
+
+== Decision and enforcement
+
+[[IAM-050]]
+*IAM-050.* Each service MUST ask an authorization engine before it acts on a protected resource, on every request.
+The service MUST call the engine through the access evaluation {abbr-api-first} of link:https://openid.net/specs/authorization-api-1_0-final.html[OpenID AuthZEN Authorization API 1.0].
+The engine MUST implement the {abbr-https-first} binding of that specification, and SHOULD publish its metadata at `/.well-known/authzen-configuration`.
+The engine MAY offer the batch evaluation and the search APIs of AuthZEN.
+The service MUST authenticate to the engine, with mutual {abbr-tls-first} or an access token.
+A standard interface turns the engine into a part that any conforming product can replace.
+
+[[IAM-051]]
+*IAM-051.* A service MUST deny by default.
+It MUST deny when the engine answers with an error, answers too late, or sends an answer it cannot read.
+It MUST check each function and each object on the server, as API-092 requires, not only in the interface.
+A service MAY keep an allow decision for at most 60 seconds.
+It MUST drop that decision after 60 seconds, or once a decision carries a newer policy version, under IAM-053.
+Broken object and function checks are the first and fifth risks of the link:https://owasp.org/API-Security/editions/2023/en/0x11-t10/[OWASP API Security Top 10].
+
+[[IAM-052]]
+*IAM-052.* The {term-identity-provider} MUST decide only coarse access, such as whether a person may use an application at all.
+Roles and groups in tokens MUST stay coarse, such as `staff` or `case-worker`.
+Rules on records, cases, amounts or relationships MUST live in the authorization engine.
+An authorization feature built into the identity provider MAY serve for that coarse access only.
+Business rules inside the identity provider tie them to one product and hide them from the people who review policies.
+
+== Policies and data
+
+[[IAM-053]]
+*IAM-053.* Each policy MUST live as code in a version control repository, and changes to it MUST follow SEC-010.
+Each policy MUST have automated tests that check its decisions through the evaluation interface, as TST-005 requires for business rules.
+Each decision MUST carry the version of the policy that made it.
+An auditor can then replay any decision against the exact policy of its time.
+
+[[IAM-054]]
+*IAM-054.* Each policy MUST use plain Rego, the policy language of the link:https://www.openpolicyagent.org/docs/policy-language[Open Policy Agent].
+Plain Rego here means Rego v1, the default syntax since the Open Policy Agent 1.0.
+A policy MUST use only the built-in functions of the link:https://www.openpolicyagent.org/docs/policy-reference[Rego policy reference].
+It MUST NOT use a built-in function or a plug-in that only one engine provides.
+Plain Rego runs on more than one engine, so a change of engine keeps the policies.
+
+[[IAM-055]]
+*IAM-055.* The engine MUST let its operator export every relationship it holds, at any time, in a documented text format.
+Each relationship MUST take the form object, relation, subject, as the link:https://research.google/pubs/pub48190/[Zanzibar paper] describes, such as `case:123#owner@user:abc`.
+The engine MUST also let the operator export the model of types and relations.
+The operator MUST be able to load the same export into another engine.
+Relationship data is often the hardest part of an engine to move, so it needs an exit from day one.
+
+[[IAM-056]]
+*IAM-056.* A service SHOULD use roles for coarse rights and attribute rules for context, such as time or amount.
+It SHOULD use relationships for ownership, assignment to a case, membership of an organization and representation.
+Each kind of rule then stays in the form that suits it, and policies stay short.
+
+[[IAM-057]]
+*IAM-057.* A request to the engine MUST name the subject and the resource by opaque identifiers.
+It MUST NOT name them by a name or by a number such as a social insurance number.
+Its context MUST hold only the attributes that the policy reads.
+Decision requests reach logs and caches, so personal information in them spreads far.
+
+== References
+
+=== Normative
+
+* link:https://openid.net/specs/authorization-api-1_0-final.html[Authorization API 1.0], OpenID Foundation, AuthZEN Working Group, Final, 2026-01-11. link:https://web.archive.org/web/20260418221715/https://openid.net/specs/authorization-api-1_0-final.html[Archived copy]
+* link:https://www.openpolicyagent.org/docs/policy-language[Policy Language], Open Policy Agent, Cloud Native Computing Foundation. link:https://web.archive.org/web/20261029223420/https://www.openpolicyagent.org/docs/policy-language[Archived copy]
+* link:https://www.openpolicyagent.org/docs/policy-reference[Policy Reference], Open Policy Agent, Cloud Native Computing Foundation, Rego v1. link:https://web.archive.org/web/20261025073118/https://www.openpolicyagent.org/docs/policy-reference[Archived copy]
+
+=== Informative
+
+* link:https://csrc.nist.gov/pubs/sp/800/162/upd2/final[NIST SP 800-162, Guide to Attribute Based Access Control (ABAC) Definition and Considerations], NIST, update 2, 2019-08. link:https://web.archive.org/web/20261025071649/https://csrc.nist.gov/pubs/sp/800/162/upd2/final[Archived copy]
+* link:https://owasp.org/API-Security/editions/2023/en/0x11-t10/[OWASP Top 10 API Security Risks], OWASP, 2023. link:https://web.archive.org/web/20260903085910/https://owasp.org/API-Security/editions/2023/en/0x11-t10/[Archived copy]
+* link:https://research.google/pubs/pub48190/[Zanzibar: Google's Consistent, Global Authorization System], USENIX Annual Technical Conference, 2019. link:https://web.archive.org/web/20231206170842/https://research.google/pubs/pub48190/[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

@@ -1,0 +1,110 @@
+= Événements d'identité et d'accès
+include::_fpsot-terms.adoc[]
+
+Cette page fixe les événements d'identité et d'accès qui existent, et ce que contient chacun.
+La spécification FPSOT sur l'observabilité fixe comment un système consigne, conserve et protège tout événement d'audit, y compris ceux-ci.
+Les deux spécifications partagent cette frontière, et aucune ne répète les règles de l'autre.
+
+== Le catalogue
+
+[[IAM-090]]
+*IAM-090.* Chaque {term-identity-provider}, {term-authorization-engine} et service DOIT émettre les événements de ce tableau que produit son propre travail.
+Il DOIT les consigner comme événements d'audit, comme le fixe la spécification FPSOT sur l'observabilité.
+Chaque type suit NAM-050 et NAM-051, dans le domaine `identity`.
+Une version mineure PEUT ajouter un type, selon NAM-081.
+
+[cols="3,2,3",options="header"]
+|===
+|Type |Émis par |Quand
+|`org.fpsot.identity.authentication.succeeded` |Fournisseur d'identité |Une personne ou une charge de travail se connecte, ou termine un rehaussement de l'authentification.
+|`org.fpsot.identity.authentication.failed` |Fournisseur d'identité |Une connexion ou un rehaussement de l'authentification échoue.
+|`org.fpsot.identity.session.ended` |Fournisseur d'identité ou application |Une session prend fin, avec le motif selon IAM-095.
+|`org.fpsot.identity.authenticator.enrolled` |Fournisseur d'identité |Une personne ajoute un authentifiant.
+|`org.fpsot.identity.authenticator.removed` |Fournisseur d'identité |Une personne ou un ou une responsable de l'administration retire un authentifiant.
+|`org.fpsot.identity.account.created` |Fournisseur d'identité |Un compte est nouveau.
+|`org.fpsot.identity.account.verified` |Fournisseur d'identité |Un compte réussit ou renouvelle la vérification de l'identité.
+|`org.fpsot.identity.account.recovered` |Fournisseur d'identité |Une personne retrouve l'accès selon IAM-016.
+|`org.fpsot.identity.account.suspended` |Fournisseur d'identité |Un compte est bloqué, par exemple selon IAM-017 ou IAM-081.
+|`org.fpsot.identity.account.deleted` |Fournisseur d'identité |Un compte est supprimé.
+|`org.fpsot.identity.token.exchanged` |Serveur d'autorisation |Un échange de jetons selon IAM-065 réussit.
+|`org.fpsot.identity.access.evaluated` |Moteur d'autorisation |Le moteur prend une décision.
+|`org.fpsot.identity.relationship.created` |Moteur d'autorisation |Un rôle, un accès donné ou une représentation commence.
+|`org.fpsot.identity.relationship.ended` |Moteur d'autorisation |Un rôle, un accès donné ou une représentation prend fin ou est révoqué.
+|`org.fpsot.identity.policy.deployed` |Moteur d'autorisation |Une nouvelle version de politique entre en vigueur.
+|`org.fpsot.identity.client.registered` |Serveur d'autorisation |Un client ou une identité de charge de travail est nouveau, ou ses clés changent.
+|===
+
+Ces événements alimentent le registre d'IAM-082 et la revue d'IAM-017.
+Sans eux, personne ne peut savoir après coup qui avait accès et qui s'en est servi.
+
+== Contenu d'un événement
+
+[[IAM-091]]
+*IAM-091.* Chaque événement DOIT contenir l'heure, le type et le résultat.
+Il DOIT contenir les identifiants opaques de l'acteur, du client et de la session, et l'identifiant de trace.
+Il DOIT contenir le niveau {abbr-fpsot-first} de la session, quand une session existe.
+Quand une personne agit pour une autre, l'événement DOIT aussi nommer la partie représentée, selon IAM-064.
+Après un échange de jetons, il DOIT nommer chaque acteur de la chaîne `act`.
+Un événement sur un travail délégué qui nomme une seule partie ne peut pas montrer qui est responsable.
+
+L'identifiant de session DOIT être une valeur opaque distincte, comme le `sid` d'OpenID Connect ou un condensé à clé.
+Il NE DOIT PAS être la valeur du témoin de connexion d'IAM-041.
+Sinon, toute personne qui lit le journal pourrait prendre le contrôle de la session.
+
+[[IAM-092]]
+*IAM-092.* Chaque événement `access.evaluated` DOIT contenir le sujet, l'action et la ressource, par type et identifiant opaque.
+Il DOIT aussi contenir la décision, la version de la politique selon IAM-053 et l'identifiant du moteur.
+Il DOIT contenir un condensé à clé (HMAC) du contexte de la requête, et non le contexte lui-même.
+Chaque décision DOIT produire un événement, qu'elle permette ou refuse.
+Les décisions montrent les raisons d'un accès, qu'aucun autre enregistrement ne contient.
+Un simple condensé d'un petit contexte se devine, alors qu'un condensé à clé résiste sans la clé.
+
+[[IAM-093]]
+*IAM-093.* Un événement NE DOIT PAS contenir de mot de passe, code, jeton, assertion de client, témoin ou clé.
+Il NE DOIT PAS contenir de nom, de courriel, de date de naissance, ni de numéro qui identifie une personne.
+Il DOIT nommer les personnes seulement par des identifiants opaques, comme le `sub` d'IAM-036.
+La spécification FPSOT sur l'observabilité fixe comment un enregistrement réduit les adresses réseau, et cette spécification ne le répète pas.
+Les enregistrements d'audit survivent aux sessions qu'ils décrivent, et chaque secret ou détail personnel y reste exposé pendant des années.
+
+Pour la revue de sécurité, trois événements d'identité ont besoin de l'adresse réseau complète du client.
+Ce sont `authentication.failed`, `authentication.succeeded` et `account.suspended`.
+Cette liste alimente les règles de minimisation de la spécification sur l'observabilité.
+Ces événements gardent l'adresse complète seulement s'ils figurent dans l'évaluation des facteurs relatifs à la vie privée.
+
+[[IAM-094]]
+*IAM-094.* Les données de chaque type d'événement DOIVENT suivre leur schéma {abbr-json-first} Schema 2020-12, publié dans `registry/events/<type>.schema.json` comme l'exige API-103.
+Leurs noms de champs DOIVENT suivre NAM-010, comme `representedPartyId`.
+Leur résultat et leur motif DOIVENT être des valeurs de liste de codes selon NAM-060.
+Chaque valeur a des libellés en français et en anglais selon NAM-061.
+Les machines lisent alors les événements dans toute langue, et les personnes voient les libellés dans la leur.
+
+La spécification FPSOT sur l'observabilité nomme les attributs de l'enregistrement, comme l'heure et l'identifiant de trace.
+Cette spécification fixe seulement les champs des données de l'événement, et ne définit pas ces noms.
+
+Quand un enregistrement porte les champs communs d'IAM-091 comme attributs, il DOIT employer ces noms.
+Un seul nom par champ permet à une requête de trouver un acteur ou une session dans tous les produits.
+
+[cols="1,2",options="header"]
+|===
+|Champ d'IAM-091 |Attribut de l'enregistrement
+|Acteur |`org.fpsot.actor.id`, `org.fpsot.actor.type`, `org.fpsot.actor.role`
+|Client |`org.fpsot.identity.client.id`
+|Session |`org.fpsot.identity.session.id`
+|Niveau |`org.fpsot.identity.assurance.level`
+|Partie représentée |`org.fpsot.identity.represented_party.id`
+|Chaîne `act` |`org.fpsot.identity.act_chain.actor_ids`, une liste d'identifiants opaques
+|Résultat |`org.fpsot.outcome`
+|===
+
+[[IAM-095]]
+*IAM-095.* Un événement `session.ended` DOIT donner un de ces motifs : `sign-out`, `idle-limit`, `overall-limit`, `assurance-dropped`, `revoked` ou `account-suspended`.
+Un événement `authentication.failed` DOIT donner un de ces motifs : `wrong-credential`, `account-locked`, `level-not-met` ou `other`.
+Une liste fixe de motifs permet de compter et de comparer les échecs d'un service à l'autre.
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

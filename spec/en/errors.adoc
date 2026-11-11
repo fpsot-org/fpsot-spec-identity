@@ -1,0 +1,94 @@
+= Errors
+include::_fpsot-terms.adoc[]
+
+An identity or access error must tell a client what to do next, without helping an attacker.
+These rules add to the error format of API-030 to API-037.
+The {abbr-fpsot-first} keeps the list of its identity and access problem types in the file `registry/problem-types.json`.
+
+== Header and body
+
+[[IAM-100]]
+*IAM-100.* An {abbr-api-first} that refuses a token MUST send the `WWW-Authenticate` header that OAuth defines.
+The header follows link:https://www.rfc-editor.org/info/rfc6750[RFC 6750] and link:https://www.rfc-editor.org/info/rfc9470[RFC 9470], with the `DPoP` scheme of link:https://www.rfc-editor.org/info/rfc9449[RFC 9449] where it applies.
+It SHOULD carry the `resource_metadata` parameter of link:https://www.rfc-editor.org/info/rfc9728[RFC 9728].
+The response MUST also carry a problem details body, as API-030 requires.
+The body MUST NOT replace the header, and MUST NOT contradict it.
+OAuth clients read the header, while other clients and people read the body.
+
+[[IAM-101]]
+*IAM-101.* A problem details body MUST use a type of this table when one fits.
+Each type is a URI that starts with `https://fpsot.org/problems/identity/`, followed by the name.
+Its French page is under `https://fpsot.org/fr/problems/identity/`, under NAM-034.
+When no type of this table fits, the {abbr-api} MUST use a shared type of API-032, such as `forbidden`.
+The titles in English and in French are in `registry/problem-types.json`, and API-033 applies to them.
+
+[cols="3,1,3,4",options="header"]
+|===
+|Name |Status |OAuth error |Problem
+|`invalid-token` |401 |`invalid_token` |The access token is not valid for this {abbr-api}.
+|`token-expired` |401 |`invalid_token` |The access token has expired.
+|`token-not-bound` |401 |`invalid_token` |The operation needs a token bound to a key, under IAM-026.
+|`invalid-dpop-proof` |401 |`invalid_dpop_proof` |The proof of possession of the key is not valid.
+|`dpop-nonce-required` |401 |`use_dpop_nonce` |The proof of possession must use the nonce that the server sent.
+|`insufficient-scope` |403 |`insufficient_scope` |The token does not have a scope that the operation needs.
+|`insufficient-user-authentication` |401 |`insufficient_user_authentication` |The operation needs a stronger or a more recent sign-in, under IAM-034.
+|`session-expired` |401 |None |The session of the browser front end has ended, under IAM-040.
+|`representation-required` |403 |None |The person must choose the party they act for, under IAM-064.
+|`representation-expired` |403 |None |The right to act for the chosen party has ended.
+|`authorization-unavailable` |503 |None |The service cannot reach the authorization engine, so it denies the request under IAM-051.
+|===
+
+A body for `insufficient-user-authentication` MUST carry the members `acrValues` and, when needed, `maxAge`.
+They repeat the values of the header, in field names that follow API-037.
+
+[source,http]
+----
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: DPoP algs="ES256 PS256 EdDSA",
+  error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high",
+  resource_metadata="https://api.example.org/.well-known/oauth-protected-resource"
+Content-Type: application/problem+json
+Content-Language: en
+
+{
+  "type": "https://fpsot.org/problems/identity/insufficient-user-authentication",
+  "title": "A stronger or more recent sign-in is needed.",
+  "status": 401,
+  "detail": "Sign in again with your security key, then repeat the request.",
+  "acrValues": ["https://fpsot.org/assurance-levels/high"]
+}
+----
+
+== What an error reveals
+
+[[IAM-102]]
+*IAM-102.* An error MUST NOT say which policy, rule or relationship led to a denial.
+It MUST NOT reveal whether a resource exists.
+It SHOULD answer `404 Not Found` under API-093 when the caller may not know that.
+It MUST NOT say whether an account exists, or which factor of a sign-in failed.
+The engine records the reason in the `access.evaluated` event of IAM-092, where the operator can read it.
+Details of a denial teach an attacker how to get around the policy.
+
+[[IAM-103]]
+*IAM-103.* The authorization endpoint and the token endpoint MUST keep the error responses of link:https://www.rfc-editor.org/info/rfc6749[OAuth 2.0] and OpenID Connect.
+They MUST NOT use problem details in place of those responses.
+OAuth clients and libraries parse those error responses, and a different format would break them.
+
+== References
+
+=== Normative
+
+* link:https://www.rfc-editor.org/info/rfc6750[RFC 6750, The OAuth 2.0 Authorization Framework: Bearer Token Usage], IETF, 2012-10. link:https://web.archive.org/web/20261027021859/https://www.rfc-editor.org/info/rfc6750/[Archived copy]
+* link:https://www.rfc-editor.org/info/rfc9470[RFC 9470, OAuth 2.0 Step Up Authentication Challenge Protocol], IETF, 2023-09. link:https://web.archive.org/web/20261022232847/https://www.rfc-editor.org/info/rfc9470/[Archived copy]
+* link:https://www.rfc-editor.org/info/rfc9449[RFC 9449, OAuth 2.0 Demonstrating Proof of Possession (DPoP)], IETF, 2023-09. link:https://web.archive.org/web/20261103003951/https://www.rfc-editor.org/info/rfc9449/[Archived copy]
+* link:https://www.rfc-editor.org/info/rfc9728[RFC 9728, OAuth 2.0 Protected Resource Metadata], IETF, 2025-04. link:https://web.archive.org/web/20261101164937/https://www.rfc-editor.org/info/rfc9728/[Archived copy]
+* link:https://www.rfc-editor.org/info/rfc6749[RFC 6749, The OAuth 2.0 Authorization Framework], IETF, 2012-10. link:https://web.archive.org/web/20261103170418/https://www.rfc-editor.org/info/rfc6749/[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

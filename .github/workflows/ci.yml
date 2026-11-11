@@ -26,6 +26,18 @@ jobs:
     with:
       prefix: ${{ needs.prefix.outputs.value }}
       doc-rules: true
+  registry:
+    # Checks registry/problem-types.json: unique type URIs, titles in English and French,
+    # status and OAuth error equal to the table, and every problem type that the
+    # specification cites (IAM-101). Checks registry/events/: one JSON Schema 2020-12 per
+    # event type of the catalog, each parsable, with a unique $id (IAM-094). Then checks
+    # that broken copies of the files fail.
+    if: github.ref_type != 'tag'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: python3 -I scripts/check-problem-types.py .
+      - run: bash scripts/test-check-problem-types.sh
   diagrams:
     if: github.ref_type != 'tag'
     uses: fpsot-org/GitHub-Actions/.github/workflows/diagrams.yml@v0

@@ -1,8 +1,50 @@
 = Spécification FPSOT sur l'identité et l'accès
 include::_fpsot-terms.adoc[]
 
-Remplacez cette page par le texte normatif de la spécification.
-Commencez par la portée, puis les classes de conformité, puis les exigences.
+Cette spécification fixe comment les logiciels du secteur public connectent les personnes et vérifient les jetons.
+Elle fixe aussi comment ils décident qui peut faire quoi.
+Elle couvre les niveaux d'assurance, la connexion, les sessions et les décisions d'accès.
+Elle couvre aussi la représentation, l'identité des charges de travail, la vie des comptes, les événements d'audit et les erreurs.
+Les règles nomment des normes et des capacités, pas des produits.
+Une page informative nomme les produits qu'emploie la mise en œuvre de référence de la {abbr-fpsot-first}.
+
+Les règles comportent onze parties, suivies de deux pages informatives.
+
+* Les xref:assurance.adoc[niveaux d'assurance] : les trois niveaux {abbr-fpsot}, leurs valeurs `acr` et leur correspondance avec les niveaux des gouvernements.
+* La xref:authentication.adoc[connexion et les authentifiants] : les facteurs, les mots de passe, la récupération et la réponse à une compromission.
+* Les xref:clients.adoc[flux de connexion et les clients] : un profil d'OpenID Connect et d'OAuth 2.0, avec FAPI 2.0 au niveau `high`.
+* Les xref:apis.adoc[jetons dans les API] : comment une {abbr-api-first} vérifie chaque jeton qu'elle reçoit.
+* Les xref:sessions.adoc[sessions et la déconnexion] : les délais des sessions et comment la déconnexion atteint chaque application.
+* L'xref:authorization.adoc[autorisation] : les décisions dans un moteur d'autorisation derrière OpenID AuthZEN, avec des politiques et des relations portables.
+* La xref:representation.adoc[représentation et la délégation] : comment une personne agit pour une autre personne ou une entreprise.
+* L'xref:workloads.adoc[identité des machines et des charges de travail] : l'identité de chaque charge de travail et les appels entre organisations.
+* Les xref:accounts.adoc[comptes, la fédération et l'approvisionnement] : l'approvisionnement, la suppression, le renouvellement et les fournisseurs d'identité externes.
+* Les xref:events.adoc[événements d'identité et d'accès] : les événements d'audit et leur contenu.
+* Les xref:errors.adoc[erreurs] : les types de problèmes des erreurs d'identité et d'accès.
+* La xref:reference-stack.adoc[pile de référence] : une page informative qui nomme les produits de la mise en œuvre de référence.
+* Les xref:questions-for-counsel.adoc[questions pour le conseiller juridique] : une page informative qui énumère les questions juridiques ouvertes.
+
+== Fichiers du registre
+
+Le dossier `registry/` contient les fichiers de données que citent les règles.
+
+* `assurance-levels.yaml` fait correspondre les niveaux {abbr-fpsot} aux niveaux d'autres cadres, selon IAM-003.
+* `problem-types.json` énumère les types de problèmes d'IAM-101, avec leurs titres en français et en anglais.
+* `events/<type>.schema.json` contient le schéma {abbr-json-first} Schema de chaque type d'événement d'IAM-090, selon IAM-094.
+
+Un test de l'intégration continue compare les types de problèmes et les schémas d'événements au texte de la spécification.
+
+== Spécifications liées
+
+Cette spécification s'appuie sur d'autres spécifications de la {abbr-fpsot}.
+La conception d'{abbr-api} fixe les erreurs et la sécurité, dans API-030 à API-037 et API-080 à API-096.
+La spécification sur la sécurité fixe la revue des changements et les secrets, comme SEC-010, SEC-020 et SEC-023.
+
+La spécification sur les modèles de données fixe la `Party` et ses relations, dans DMO-040 et DMO-044.
+La spécification sur l'internationalisation fixe les étiquettes de langue et le choix des paramètres régionaux, dans LOC-001 et LOC-005.
+La spécification sur le nommage fixe les noms des portées, des revendications et des événements, comme NAM-010, NAM-050 et NAM-060.
+La spécification sur les tests fixe les tests de politiques et la conformité, dans TST-005 et TST-044 à TST-048.
+La spécification FPSOT sur l'observabilité fixe comment un système consigne, conserve et protège les événements de cette spécification.
 
 == Conformité
 
@@ -11,35 +53,50 @@ ____
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 (link:https://www.rfc-editor.org/info/rfc2119[RFC 2119], link:https://www.rfc-editor.org/info/rfc8174[RFC 8174]) when, and only when, they appear in all capitals, as shown here.
 ____
 
-Les mots clés suivent l'exigence WRT-010 de la spécification de rédaction de la {abbr-fpsot-first}.
+Les mots clés suivent l'exigence WRT-010 de la spécification de rédaction de la {abbr-fpsot}.
 La version française emploie les mots clés français de l'exigence WRT-011.
 
-== Exigences
+Les règles visent quatre sortes de composants.
+Un fournisseur d'identité et son serveur d'autorisation sont conformes quand ils respectent les règles qui les nomment.
+Une application ou une {abbr-api} est conforme quand elle respecte les règles sur les clients, les jetons et les sessions.
+Un moteur d'autorisation est conforme quand il respecte IAM-050 et IAM-053 à IAM-055.
+Une charge de travail est conforme quand elle respecte IAM-070 à IAM-074.
+Un produit qui en combine plusieurs est conforme quand il respecte les règles de chacun.
 
-Donnez à chaque exigence une ancre avec son identifiant, juste au-dessus de son paragraphe.
-L'ancre ressemble à `+[[XYZ-001]]+`.
-L'exemple ci-dessous montre la forme. Remplacez-le par la première exigence.
+== Statut juridique
 
-[[TPL-001]]
-*TPL-001.* Un énoncé normatif DOIT employer un des mots clés du {abbr-bcp-first} 14, en majuscules.
-Le mot clé donne sa force à la règle.
+La spécification énonce la pratique de la {abbr-fpsot}, et elle ne constitue pas un avis juridique.
+Les points qui exigent une ou un juriste figurent dans des notes informatives, jamais dans une règle.
+La page xref:questions-for-counsel.adoc[Questions pour le conseiller juridique] les énumère.
+
+== Normes
+
+Les règles résument les normes externes dans leurs propres mots et n'en reprennent aucun texte.
+Les principales sont link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0], la pratique exemplaire de sécurité d'OAuth, FAPI 2.0 et Web Authentication Level 3.
+Les autres sont OpenID AuthZEN Authorization API 1.0 et le {abbr-nist-first} SP 800-63-4.
+Chaque page énumère les versions qu'elle cite.
+
+OAuth 2.1 n'est encore qu'un Internet-Draft, link:https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/[draft-ietf-oauth-v2-1].
+Les règles sur le link:https://www.rfc-editor.org/info/rfc9700[RFC 9700] en donnent le comportement dès aujourd'hui.
+Une version ultérieure citera OAuth 2.1 quand il deviendra un RFC.
 
 == Références
-
-Donnez ici chaque source externe que cite cette page, avec la même adresse que son lien dans le texte.
-Chaque entrée donne le titre, l'éditeur, la version, la date et une copie archivée.
 
 === Références normatives
 
 * link:https://www.rfc-editor.org/info/rfc2119[RFC 2119, Key words for use in RFCs to Indicate Requirement Levels], IETF, BCP 14, 1997-03. link:https://web.archive.org/web/20261103005705/https://www.rfc-editor.org/info/rfc2119/[Copie archivée]
 * link:https://www.rfc-editor.org/info/rfc8174[RFC 8174, Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words], IETF, BCP 14, 2017-05. link:https://web.archive.org/web/20261103005743/https://www.rfc-editor.org/info/rfc8174/[Copie archivée]
+* link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0 incorporating errata set 2], OpenID Foundation, Final, 2023-12-15. Also published as ISO/IEC 26131:2024. link:https://web.archive.org/web/20261023004717/https://openid.net/specs/openid-connect-core-1_0.html[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9700[RFC 9700, Best Current Practice for OAuth 2.0 Security], IETF, BCP 240, 2025-01. link:https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/[Copie archivée]
+
+=== Références informatives
+
+* link:https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/[The OAuth 2.1 Authorization Framework, draft-ietf-oauth-v2-1], IETF, version 17, 2026-10-31. link:https://web.archive.org/web/20261104041337/https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/[Copie archivée]
 
 == Historique du document
-
-Ajoutez une ligne pour chaque version qui modifie cette page.
 
 [cols="1,1,4",options="header"]
 |===
 |Version |Date |Changement
-|0.1.0 |2026-11-03 |Première version.
+|0.1.0 |2026-11-10 |Première version.
 |===

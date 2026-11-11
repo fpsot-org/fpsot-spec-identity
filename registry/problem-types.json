@@ -1,0 +1,172 @@
+{
+  "$comment": "SPDX-License-Identifier: Community-Spec-1.0. FPSOT identity and access problem types (IAM-101). Checked by scripts/check-problem-types.py.",
+  "base": "https://fpsot.org/problems/identity/",
+  "frenchPages": "https://fpsot.org/fr/problems/identity/",
+  "types": [
+    {
+      "name": "invalid-token",
+      "type": "https://fpsot.org/problems/identity/invalid-token",
+      "status": 401,
+      "oauthError": "invalid_token",
+      "title": {
+        "en": "The access token is not valid.",
+        "fr": "Le jeton d'accès n'est pas valide."
+      },
+      "description": {
+        "en": "The token is malformed, has a wrong signature, issuer or audience, or the server revoked it.",
+        "fr": "Le jeton est mal formé, sa signature, son émetteur ou son public est erroné, ou le serveur l'a révoqué."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "token-expired",
+      "type": "https://fpsot.org/problems/identity/token-expired",
+      "status": 401,
+      "oauthError": "invalid_token",
+      "title": {
+        "en": "The access token has expired.",
+        "fr": "Le jeton d'accès a expiré."
+      },
+      "description": {
+        "en": "The client gets a new token and repeats the request.",
+        "fr": "Le client obtient un nouveau jeton et répète la requête."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "token-not-bound",
+      "type": "https://fpsot.org/problems/identity/token-not-bound",
+      "status": 401,
+      "oauthError": "invalid_token",
+      "title": {
+        "en": "The access token must be bound to a key.",
+        "fr": "Le jeton d'accès doit être lié à une clé."
+      },
+      "description": {
+        "en": "The operation needs a token bound to a key of the client, under IAM-026.",
+        "fr": "L'opération exige un jeton lié à une clé du client, selon IAM-026."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "invalid-dpop-proof",
+      "type": "https://fpsot.org/problems/identity/invalid-dpop-proof",
+      "status": 401,
+      "oauthError": "invalid_dpop_proof",
+      "title": {
+        "en": "The proof of possession is not valid.",
+        "fr": "La preuve de possession n'est pas valide."
+      },
+      "description": {
+        "en": "The DPoP proof of RFC 9449 is missing, malformed or does not match the request.",
+        "fr": "La preuve DPoP du RFC 9449 est absente, mal formée ou ne correspond pas à la requête."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "dpop-nonce-required",
+      "type": "https://fpsot.org/problems/identity/dpop-nonce-required",
+      "status": 401,
+      "oauthError": "use_dpop_nonce",
+      "title": {
+        "en": "The proof of possession needs a new nonce.",
+        "fr": "La preuve de possession exige un nouveau nonce."
+      },
+      "description": {
+        "en": "The client repeats the request with the nonce from the DPoP-Nonce header.",
+        "fr": "Le client répète la requête avec le nonce de l'en-tête DPoP-Nonce."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "insufficient-scope",
+      "type": "https://fpsot.org/problems/identity/insufficient-scope",
+      "status": 403,
+      "oauthError": "insufficient_scope",
+      "title": {
+        "en": "The access token lacks a needed scope.",
+        "fr": "Il manque au jeton d'accès une portée nécessaire."
+      },
+      "description": {
+        "en": "The client asks for a token with the scope that the header names.",
+        "fr": "Le client demande un jeton avec la portée que nomme l'en-tête."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "insufficient-user-authentication",
+      "type": "https://fpsot.org/problems/identity/insufficient-user-authentication",
+      "status": 401,
+      "oauthError": "insufficient_user_authentication",
+      "title": {
+        "en": "A stronger or more recent sign-in is needed.",
+        "fr": "Une connexion plus forte ou plus récente est nécessaire."
+      },
+      "description": {
+        "en": "The person signs in again at the level in acrValues, under IAM-034.",
+        "fr": "La personne se connecte de nouveau au niveau indiqué dans acrValues, selon IAM-034."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "session-expired",
+      "type": "https://fpsot.org/problems/identity/session-expired",
+      "status": 401,
+      "oauthError": null,
+      "title": {
+        "en": "The session has ended.",
+        "fr": "La session a pris fin."
+      },
+      "description": {
+        "en": "The person signs in again, under IAM-040 and IAM-041.",
+        "fr": "La personne se connecte de nouveau, selon IAM-040 et IAM-041."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "representation-required",
+      "type": "https://fpsot.org/problems/identity/representation-required",
+      "status": 403,
+      "oauthError": null,
+      "title": {
+        "en": "Choose the party you act for.",
+        "fr": "Choisissez la partie pour laquelle vous agissez."
+      },
+      "description": {
+        "en": "The person chooses the represented party before the operation, under IAM-064.",
+        "fr": "La personne choisit la partie représentée avant l'opération, selon IAM-064."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "representation-expired",
+      "type": "https://fpsot.org/problems/identity/representation-expired",
+      "status": 403,
+      "oauthError": null,
+      "title": {
+        "en": "Your right to act for this party has ended.",
+        "fr": "Votre droit d'agir pour cette partie a pris fin."
+      },
+      "description": {
+        "en": "The relationship of representation has ended or no longer covers the operation.",
+        "fr": "La relation de représentation a pris fin ou ne couvre plus l'opération."
+      },
+      "since": "0.1.0"
+    },
+    {
+      "name": "authorization-unavailable",
+      "type": "https://fpsot.org/problems/identity/authorization-unavailable",
+      "status": 503,
+      "oauthError": null,
+      "title": {
+        "en": "Access cannot be checked for now.",
+        "fr": "L'accès ne peut pas être vérifié pour l'instant."
+      },
+      "description": {
+        "en": "The service cannot reach the authorization engine and denies the request, under IAM-051.",
+        "fr": "Le service ne peut pas joindre le moteur d'autorisation et refuse la requête, selon IAM-051."
+      },
+      "since": "0.1.0"
+    }
+  ]
+}

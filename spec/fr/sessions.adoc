@@ -1,0 +1,82 @@
+= Sessions et déconnexion
+include::_fpsot-terms.adoc[]
+
+Une session permet à une personne d'agir pendant un temps après une seule connexion.
+Ces règles fixent la durée d'une session, le moment où elle prend fin et comment la déconnexion atteint chaque application.
+
+== Délais
+
+[[IAM-040]]
+*IAM-040.* Une session DOIT prendre fin aux délais de ce tableau, ou plus tôt.
+Le délai total compte depuis la connexion, et le délai d'inactivité depuis la dernière action de la personne.
+Une session du personnel suit la link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[ligne directrice fédérale sur l'authentification multifacteur].
+Une session du public suit le link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4].
+Une organisation PEUT fixer des délais plus courts.
+
+[cols="2,1,1,1,1",options="header"]
+|===
+|Qui |Total, `low` et `substantial` |Inactivité, `low` et `substantial` |Total, `high` |Inactivité, `high`
+|Personnel |12 heures |30 minutes |12 heures |15 minutes
+|Public |24 heures |1 heure |12 heures |15 minutes
+|===
+
+Une personne à un comptoir public ou sur un ordinateur partagé a besoin des délais plus courts du personnel.
+Des délais plus longs pour le public évitent aux gens de se reconnecter sur leurs propres appareils.
+Au niveau `high`, une session du public reçoit 12 heures au total et 15 minutes d'inactivité.
+Ce sont les délais du niveau AAL3 du NIST SP 800-63B-4, auquel correspond `high` selon IAM-003.
+
+Au Québec, l'article 36 de l'indication d'application IA-SI-2022-001-OP recommande 8 heures au total et 30 minutes d'inactivité.
+Ces valeurs sont plus strictes que les délais du public, et une organisation peut les adopter selon cette règle.
+
+[[IAM-041]]
+*IAM-041.* Quand une session prend fin, la personne DOIT se reconnecter au niveau du service.
+Le serveur dorsal d'une application frontale DOIT alors abandonner les jetons de la session.
+Le serveur d'autorisation DOIT révoquer ses jetons d'actualisation.
+L'application DOIT créer un nouvel identifiant de session à chaque connexion et à chaque rehaussement de l'authentification.
+Un identifiant de session DOIT être aléatoire, avec au moins 128 bits d'entropie.
+Un identifiant fixe permet à une attaque de planter une session avant que la personne se connecte.
+
+== Déconnexion
+
+[[IAM-042]]
+*IAM-042.* Une application DOIT offrir une déconnexion qui met fin à sa session et à celle du {term-identity-provider}.
+Elle DOIT employer pour cela link:https://openid.net/specs/openid-connect-rpinitiated-1_0.html[OpenID Connect RP-Initiated Logout 1.0].
+Le fournisseur d'identité DOIT alors aviser chaque autre application de la session, avec link:https://openid.net/specs/openid-connect-backchannel-1_0.html[OpenID Connect Back-Channel Logout 1.0].
+Chaque application DOIT mettre fin à sa session quand elle reçoit cet avis.
+Le fournisseur et ses applications DEVRAIENT aussi échanger des événements de session selon link:https://openid.net/specs/openid-caep-1_0-final.html[OpenID Continuous Access Evaluation Profile 1.0].
+Une personne qui se déconnecte sur un ordinateur partagé s'attend à ce que chaque service la déconnecte.
+
+[[IAM-043]]
+*IAM-043.* Une session DOIT garder le niveau d'assurance du service pendant toute sa durée.
+Quand le niveau tombe sous celui du service, l'application DOIT mettre fin à la session.
+Elle PEUT plutôt exiger un rehaussement de l'authentification avant la prochaine action.
+Le niveau baisse quand la personne retire l'authentifiant de la connexion, ou quand le compte perd sa vérification.
+Cette option ne s'applique pas si le gouvernement exige la fin de la session, comme le Québec à l'article 25.
+
+[[IAM-044]]
+*IAM-044.* Un service DEVRAIT montrer à chaque personne la liste de ses sessions actives.
+La liste DEVRAIT donner l'appareil et l'heure de chaque connexion.
+La personne DEVRAIT pouvoir mettre fin à chacune d'elles.
+Les gens repèrent souvent un compte volé d'abord par une session qu'ils ne connaissent pas.
+
+== Références
+
+=== Références normatives
+
+* link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html[Copie archivée]
+* link:https://openid.net/specs/openid-connect-rpinitiated-1_0.html[OpenID Connect RP-Initiated Logout 1.0], OpenID Foundation, Final, 2022-09-12. link:https://web.archive.org/web/20261102194245/https://openid.net/specs/openid-connect-rpinitiated-1_0.html[Copie archivée]
+* link:https://openid.net/specs/openid-connect-backchannel-1_0.html[OpenID Connect Back-Channel Logout 1.0 incorporating errata set 1], OpenID Foundation, Final, 2023-12-15. Also published as ISO/IEC 26137:2024. link:https://web.archive.org/web/20261024025639/https://openid.net/specs/openid-connect-backchannel-1_0.html[Copie archivée]
+
+=== Références informatives
+
+* Indication d'application IA-SI-2022-001-OP, Niveaux d'assurance de l'identité, Gouvernement du Québec, chef gouvernemental de la sécurité de l'information, 2022-10-04. Il n'en existe aucune copie archivée. Le PDF se trouve à `https://www.cyber.gouv.qc.ca/publications/IA-SI-2022-001-OP_NiveauxAssurIdentite.pdf`.
+* link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Government of Canada Guideline on Multi-Factor Authentication: Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain], Treasury Board of Canada Secretariat. link:https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Copie archivée]
+* link:https://openid.net/specs/openid-caep-1_0-final.html[OpenID Continuous Access Evaluation Profile 1.0], OpenID Foundation, Final, 2025-08-29. link:https://web.archive.org/web/20261006112628/https://openid.net/specs/openid-caep-1_0-final.html[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

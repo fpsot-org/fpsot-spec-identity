@@ -1,8 +1,49 @@
 = FPSOT identity and access specification
 include::_fpsot-terms.adoc[]
 
-Replace this page with the normative text of the specification.
-Start with the scope, then the conformance classes, then the requirements.
+This specification sets how public-sector software signs people in, issues and checks tokens, and decides who may do what.
+It covers the levels of assurance, the sign-in, the sessions and the decisions on access.
+It also covers representation, the identity of workloads, the life of accounts, audit events and errors.
+The rules name standards and capabilities, not products.
+One informative page names the products that the {abbr-fpsot-first} reference implementation uses.
+
+The rules come in eleven parts, and two informative pages follow them.
+
+* xref:assurance.adoc[Assurance levels] sets the three {abbr-fpsot} levels, their `acr` values and their mapping to the levels of governments.
+* xref:authentication.adoc[Sign-in and authenticators] sets the factors of a sign-in, passwords, recovery and the response to a compromise.
+* xref:clients.adoc[Sign-in flows and clients] profiles OpenID Connect and OAuth 2.0 for each client, with FAPI 2.0 at the `high` level.
+* xref:apis.adoc[Tokens at APIs] sets how an {abbr-api-first} checks each token it receives.
+* xref:sessions.adoc[Sessions and sign-out] sets the time limits of sessions and how sign-out reaches every application.
+* xref:authorization.adoc[Authorization] puts decisions in an authorization engine behind OpenID AuthZEN, with portable policies and relationships.
+* xref:representation.adoc[Representation and delegation] sets how a person acts for another person or a business.
+* xref:workloads.adoc[Machine and workload identity] gives each workload its own identity, and sets the calls between organizations.
+* xref:accounts.adoc[Accounts, federation and provisioning] covers provisioning, removal, renewal and outside identity providers.
+* xref:events.adoc[Identity and access events] lists the audit events and their content.
+* xref:errors.adoc[Errors] sets the problem types for identity and access errors.
+* xref:reference-stack.adoc[Reference stack] is informative, and names the products of the reference implementation.
+* xref:questions-for-counsel.adoc[Questions for counsel] is informative, and lists the legal questions that remain open.
+
+== Registry files
+
+The folder `registry/` holds the data files that the rules cite.
+
+* `assurance-levels.yaml` maps the {abbr-fpsot} levels to the levels of other frameworks, under IAM-003.
+* `problem-types.json` lists the problem types of IAM-101, with their titles in English and in French.
+* `events/<type>.schema.json` holds the {abbr-json-first} Schema of each event type of IAM-090, under IAM-094.
+
+A test in continuous integration checks the problem types and the event schemas against the text of the specification.
+
+== Related specifications
+
+This specification builds on other {abbr-fpsot} specifications.
+The {abbr-api} design specification sets the rules on errors and security, in API-030 to API-037 and API-080 to API-096.
+The security specification sets the review of changes and the rules on secrets, such as SEC-010, SEC-020 and SEC-023.
+
+The data models specification sets the `Party` and its relationships, in DMO-040 and DMO-044.
+The internationalization specification sets the language tags and the choice of a locale, in LOC-001 and LOC-005.
+The naming specification sets the names of scopes, claims and events, such as NAM-010, NAM-050 and NAM-060.
+The testing specification sets the tests of policies and the conformance suites, in TST-005 and TST-044 to TST-048.
+The FPSOT observability specification sets how a system records, keeps and protects the events of this specification.
 
 == Conformance
 
@@ -11,35 +52,49 @@ ____
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 (link:https://www.rfc-editor.org/info/rfc2119[RFC 2119], link:https://www.rfc-editor.org/info/rfc8174[RFC 8174]) when, and only when, they appear in all capitals, as shown here.
 ____
 
-The keywords follow requirement WRT-010 of the {abbr-fpsot-first} writing specification.
+The keywords follow requirement WRT-010 of the {abbr-fpsot} writing specification.
 The French version uses the French keywords of WRT-011.
 
-== Requirements
+The rules address four kinds of component.
+An identity provider and its authorization server conform when they meet the rules that name them.
+An application or an {abbr-api} conforms when it meets the rules on clients, tokens, sessions and errors.
+An authorization engine conforms when it meets IAM-050 and IAM-053 to IAM-055.
+A workload conforms when it meets IAM-070 to IAM-074.
+A product that combines several of these conforms when it meets the rules of each.
 
-Give each requirement an anchor line with its ID, directly above its paragraph.
-The anchor looks like `+[[XYZ-001]]+`.
-The example below shows the form. Replace it with the first requirement.
+== Legal status
 
-[[TPL-001]]
-*TPL-001.* A normative statement MUST use one of the {abbr-bcp-first} 14 keywords in capitals.
-The keyword gives the rule its strength.
+The specification states the practice of {abbr-fpsot}, and it is not legal advice.
+Points that need a lawyer sit in informative notes or on the page xref:questions-for-counsel.adoc[Questions for counsel], never in a rule.
+
+== Standards
+
+The rules summarize outside standards in their own words and take no text from them.
+The main ones are link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0], the OAuth security best practice, FAPI 2.0 and Web Authentication Level 3.
+The others are OpenID AuthZEN Authorization API 1.0 and {abbr-nist-first} SP 800-63-4.
+Each page lists the versions that it cites.
+
+OAuth 2.1 is still an Internet-Draft, link:https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/[draft-ietf-oauth-v2-1].
+The rules on link:https://www.rfc-editor.org/info/rfc9700[RFC 9700] give its behavior today.
+A later version will cite OAuth 2.1 once it becomes an RFC.
 
 == References
-
-List here each outside source that this page cites, with the same address as its link in the text.
-Each entry gives the title, publisher, version, date and an archived copy.
 
 === Normative
 
 * link:https://www.rfc-editor.org/info/rfc2119[RFC 2119, Key words for use in RFCs to Indicate Requirement Levels], IETF, BCP 14, 1997-03. link:https://web.archive.org/web/20261103005705/https://www.rfc-editor.org/info/rfc2119/[Archived copy]
 * link:https://www.rfc-editor.org/info/rfc8174[RFC 8174, Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words], IETF, BCP 14, 2017-05. link:https://web.archive.org/web/20261103005743/https://www.rfc-editor.org/info/rfc8174/[Archived copy]
+* link:https://openid.net/specs/openid-connect-core-1_0.html[OpenID Connect Core 1.0 incorporating errata set 2], OpenID Foundation, Final, 2023-12-15. Also published as ISO/IEC 26131:2024. link:https://web.archive.org/web/20261023004717/https://openid.net/specs/openid-connect-core-1_0.html[Archived copy]
+* link:https://www.rfc-editor.org/info/rfc9700[RFC 9700, Best Current Practice for OAuth 2.0 Security], IETF, BCP 240, 2025-01. link:https://web.archive.org/web/20261027181635/https://www.rfc-editor.org/info/rfc9700/[Archived copy]
+
+=== Informative
+
+* link:https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/[The OAuth 2.1 Authorization Framework, draft-ietf-oauth-v2-1], IETF, version 17, 2026-10-31. link:https://web.archive.org/web/20261104041337/https://datatracker.ietf.org/doc/draft-ietf-oauth-v2-1/[Archived copy]
 
 == Document history
-
-Add one row for each version that changes this page.
 
 [cols="1,1,4",options="header"]
 |===
 |Version |Date |Change
-|0.1.0 |2026-11-03 |First version.
+|0.1.0 |2026-11-10 |First version.
 |===

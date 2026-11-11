@@ -1,0 +1,102 @@
+= Niveaux d'assurance
+include::_fpsot-terms.adoc[]
+
+Chaque service a besoin d'un degré de confiance connu qu'une personne est bien celle qu'elle prétend être.
+Cette page fixe les trois niveaux d'assurance de la {abbr-fpsot-first} et la façon dont un service en choisit un.
+Le reste de la spécification renforce ses règles selon le niveau.
+
+== Les trois niveaux
+
+[[IAM-001]]
+*IAM-001.* Chaque service DOIT déclarer le niveau d'assurance {abbr-fpsot} qu'il exige : `low`, `substantial` ou `high`.
+Il DOIT choisir le niveau à partir d'une évaluation documentée, qui pèse le préjudice que causerait une identité erronée.
+L'évaluation DOIT couvrir la confidentialité, l'intégrité et la disponibilité de l'information.
+Un service qui n'exige aucune connexion DOIT tout de même consigner l'évaluation et son résultat.
+Un organisme public du Québec doit évaluer chaque service de la même façon, et une évaluation sert aux deux fins.
+Le tableau donne le minimum de chaque niveau.
+
+[cols="1,3,3",options="header"]
+|===
+|Niveau |Vérification de l'identité |Authentification
+|`low` |La personne déclare ses propres renseignements, ou le service n'en demande aucun. |Un facteur, selon IAM-014.
+|`substantial` |Le service vérifie une preuve d'identité, comme une pièce d'identité avec photo, auprès d'une source de confiance. |Authentification multifacteur, avec une option résistante à l'hameçonnage offerte, selon IAM-010. Les clés d'accès synchronisées comptent.
+|`high` |Un agent ou une agente, ou un moyen équivalent, vérifie plusieurs preuves et les corrobore auprès d'une source de confiance. |Authentification multifacteur résistante à l'hameçonnage, avec une clé matérielle liée à l'appareil, selon IAM-011.
+|===
+
+[[IAM-002]]
+*IAM-002.* La revendication `acr` d'un jeton d'identité ou d'un jeton d'accès DOIT contenir une de ces valeurs.
+
+* `https://fpsot.org/assurance-levels/low`
+* `https://fpsot.org/assurance-levels/substantial`
+* `https://fpsot.org/assurance-levels/high`
+
+La valeur `acr` DOIT nommer le niveau qu'atteint la connexion en cours, et non la méthode.
+Les méthodes vont dans la revendication `amr`, avec les valeurs du link:https://www.rfc-editor.org/info/rfc8176[RFC 8176].
+Ces valeurs figurent au link:https://www.iana.org/assignments/jwt/jwt.xhtml[registre des revendications des jetons Web JSON].
+Une {abbr-uri-first} de niveau garde son sens d'un produit et d'un pays à l'autre.
+Un nom de méthode, lui, ne dit rien de la force.
+Ces adresses suivent NAM-030 et NAM-083, et restent donc stables.
+
+[[IAM-003]]
+*IAM-003.* Un service DOIT choisir un niveau {abbr-fpsot} au moins aussi strict que celui qu'exige le gouvernement dont il relève.
+Il DOIT lire la correspondance dans le fichier `registry/assurance-levels.yaml` de ce dépôt.
+Le service DOIT confirmer auprès de l'autorité chaque correspondance qui porte la mention _à vérifier_.
+Un gouvernement peut fixer un détail plus strict, comme l'interdiction des codes transmis par SMS.
+Le service DOIT aussi respecter ce détail.
+
+Le tableau ci-dessous reprend la correspondance pour le lectorat.
+
+[cols="1,2,2,1,1,2",options="header"]
+|===
+|Niveau {abbr-fpsot} |Québec |Canada |Cadre de confiance pancanadien |eIDAS |{abbr-nist-first} SP 800-63-4
+|`low` |ID1 et AU1 |Justificatif de niveau 2, à vérifier |Niveau 1 ou 2, à vérifier |Faible, à vérifier |IAL1 et AAL1
+|`substantial` |ID2 et AU2, ou ID3 et AU3. Au niveau ID3, les codes à usage unique par SMS, appel vocal, télécopie, courriel ou courrier sont interdits, et les preuves sont renouvelées tous les 18 mois. |Justificatif de niveau 3 |Niveau 3, à vérifier |Substantiel, à vérifier |IAL2 et AAL2
+|`high` |ID4 et AU4 |Justificatif de niveau 4 |Niveau 4, à vérifier |Élevé, à vérifier |IAL3 et AAL3, avec FAL2 ou plus
+|===
+
+La colonne du Québec vient des link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[règles du Québec sur l'assurance de l'identité numérique].
+Elle tient aussi compte de l'indication d'application IA-SI-2022-001-OP, qui nomme ses niveaux _moyen_, _élevé_ et _très élevé_.
+Cette spécification lit le niveau _élevé_ de cette indication comme ID3, un lien déduit que l'indication n'énonce pas.
+La colonne du Canada vient de la link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[ligne directrice fédérale sur l'authentification multifacteur].
+Les autres colonnes viennent du link:https://diacc.ca/trust-framework/[Cadre de confiance pancanadien], du link:https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[règlement eIDAS sur les niveaux] et du link:https://csrc.nist.gov/pubs/sp/800/63/4/final[NIST SP 800-63-4].
+
+Le niveau _élevé_ du Québec, ID3, correspond au niveau FPSOT substantiel (`substantial`), et non au niveau FPSOT élevé.
+Le même mot nomme donc deux niveaux différents, et il faut vérifier à quel cadre appartient un niveau.
+
+[[IAM-004]]
+*IAM-004.* Un {term-identity-provider} NE DOIT PAS déclarer un niveau `acr` supérieur à la vérification d'identité que le compte a réussie.
+Un authentifiant fort sur un compte non vérifié prouve seulement que la même personne est revenue.
+Un service DEVRAIT consigner le niveau de vérification de l'identité et le niveau d'authentification d'un compte comme deux faits distincts.
+Il peut alors relever l'un sans l'autre, comme le font les règles du Québec et le {abbr-nist} SP 800-63-4.
+
+== Portefeuilles numériques
+
+Cette version ne fixe aucune règle sur les portefeuilles d'identité numérique ou les attestations vérifiables.
+Les portefeuilles européens et link:https://openid.net/specs/openid-4-verifiable-presentations-1_0-final.html[OpenID for Verifiable Presentations 1.0] pourront mener à des règles plus tard.
+Le futur portefeuille du Québec aussi.
+D'ici là, un portefeuille peut seulement servir de moyen de plus pour vérifier l'identité selon IAM-001.
+
+== Références
+
+=== Références normatives
+
+* link:https://www.rfc-editor.org/info/rfc8176[RFC 8176, Authentication Method Reference Values], IETF, 2017-06. link:https://web.archive.org/web/20261110131210/https://www.rfc-editor.org/info/rfc8176/[Copie archivée]
+* link:https://www.iana.org/assignments/jwt/jwt.xhtml[JSON Web Token Claims], IANA, registry. link:https://web.archive.org/web/20260731100731/https://www.iana.org/assignments/jwt/jwt.xhtml[Copie archivée]
+
+=== Références informatives
+
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Copie archivée]
+* link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Government of Canada Guideline on Multi-Factor Authentication: Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain], Treasury Board of Canada Secretariat. link:https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Copie archivée]
+* Indication d'application IA-SI-2022-001-OP, Niveaux d'assurance de l'identité, Gouvernement du Québec, chef gouvernemental de la sécurité de l'information, 2022-10-04. Il n'en existe aucune copie archivée. Le PDF se trouve à `https://www.cyber.gouv.qc.ca/publications/IA-SI-2022-001-OP_NiveauxAssurIdentite.pdf`.
+* link:https://diacc.ca/trust-framework/[Pan-Canadian Trust Framework], Digital ID and Authentication Council of Canada. link:https://web.archive.org/web/20261025150638/https://diacc.ca/trust-framework/[Copie archivée]
+* link:https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[Commission Implementing Regulation (EU) 2015/1502 on minimum technical specifications and procedures for assurance levels for electronic identification means], European Commission, 2015-09-08. link:https://web.archive.org/web/20260202074700/https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj[Copie archivée]
+* link:https://csrc.nist.gov/pubs/sp/800/63/4/final[NIST SP 800-63-4, Digital Identity Guidelines], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261010080229/https://csrc.nist.gov/pubs/sp/800/63/4/final[Copie archivée]
+* link:https://openid.net/specs/openid-4-verifiable-presentations-1_0-final.html[OpenID for Verifiable Presentations 1.0], OpenID Foundation, Final, 2025-07-10. link:https://web.archive.org/web/20261004185622/https://openid.net/specs/openid-4-verifiable-presentations-1_0-final.html[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

@@ -1,0 +1,110 @@
+= Identity and access events
+include::_fpsot-terms.adoc[]
+
+This page sets which identity and access events exist, and what each one holds.
+The FPSOT observability specification sets how a system records, keeps and protects any audit event, these included.
+The two specifications share this boundary, and neither repeats the rules of the other.
+
+== The catalog
+
+[[IAM-090]]
+*IAM-090.* Each {term-identity-provider}, {term-authorization-engine} and service MUST emit the events of this table that its own work produces.
+It MUST record them as audit events, as the FPSOT observability specification sets.
+Each type follows NAM-050 and NAM-051, in the domain `identity`.
+A minor version MAY add a type, under NAM-081.
+
+[cols="3,2,3",options="header"]
+|===
+|Type |Emitted by |When
+|`org.fpsot.identity.authentication.succeeded` |Identity provider |A person or a workload signs in, or completes a step-up.
+|`org.fpsot.identity.authentication.failed` |Identity provider |A sign-in or a step-up fails.
+|`org.fpsot.identity.session.ended` |Identity provider or application |A session ends, with the reason under IAM-095.
+|`org.fpsot.identity.authenticator.enrolled` |Identity provider |A person adds an authenticator.
+|`org.fpsot.identity.authenticator.removed` |Identity provider |A person or an administrator removes an authenticator.
+|`org.fpsot.identity.account.created` |Identity provider |An account is new.
+|`org.fpsot.identity.account.verified` |Identity provider |An account passes or renews identity verification.
+|`org.fpsot.identity.account.recovered` |Identity provider |A person regains access under IAM-016.
+|`org.fpsot.identity.account.suspended` |Identity provider |An account is blocked, such as under IAM-017 or IAM-081.
+|`org.fpsot.identity.account.deleted` |Identity provider |An account is removed.
+|`org.fpsot.identity.token.exchanged` |Authorization server |A token exchange under IAM-065 succeeds.
+|`org.fpsot.identity.access.evaluated` |Authorization engine |The engine makes a decision.
+|`org.fpsot.identity.relationship.created` |Authorization engine |A role, a grant or a representation starts.
+|`org.fpsot.identity.relationship.ended` |Authorization engine |A role, a grant or a representation ends or is revoked.
+|`org.fpsot.identity.policy.deployed` |Authorization engine |A new policy version takes effect.
+|`org.fpsot.identity.client.registered` |Authorization server |A client or a workload identity is new, or its keys change.
+|===
+
+These events feed the register of IAM-082 and the review of IAM-017.
+Without them, nobody can tell after the fact who had access and who used it.
+
+== Content of an event
+
+[[IAM-091]]
+*IAM-091.* Each event MUST hold the time, the type and the outcome.
+It MUST hold the opaque identifiers of the actor, of the client and of the session, and the trace identifier.
+It MUST hold the {abbr-fpsot-first} level of the session when one exists.
+When a person acts for someone else, the event MUST also name the represented party, under IAM-064.
+After a token exchange, it MUST name each actor of the `act` chain.
+An event about delegated work that names only one party cannot show who is responsible.
+
+The session identifier MUST be its own opaque value, such as the OpenID Connect `sid` or a keyed hash.
+It MUST NOT be the value of the session cookie of IAM-041.
+Anyone who reads the log could otherwise take over the session.
+
+[[IAM-092]]
+*IAM-092.* Each `access.evaluated` event MUST hold the subject, the action and the resource, by type and opaque identifier.
+It MUST also hold the decision, the policy version under IAM-053 and the identifier of the engine.
+It MUST hold an HMAC, which is a keyed hash, of the context of the request, not the context itself.
+Each decision MUST produce an event, whether it allows or denies.
+Decisions show the reasons for access, which no other record holds.
+Anyone can reverse a plain hash of a small context by guessing, but not a keyed hash without its key.
+
+[[IAM-093]]
+*IAM-093.* An event MUST NOT hold a password, a code, a token, a client assertion, a cookie or a key.
+It MUST NOT hold a name, an email address, a birth date, or a number that identifies a person.
+It MUST name people only by opaque identifiers, such as the `sub` of IAM-036.
+The FPSOT observability specification sets how a record minimizes network addresses, and this specification does not repeat it.
+Audit records outlive the sessions they describe, so each secret or personal detail in them stays exposed for years.
+
+For security review, three identity events need the full network address of the client.
+They are `authentication.failed`, `authentication.succeeded` and `account.suspended`.
+This list is an input to the minimization rules of the observability specification.
+They keep the full address only when they appear in the privacy impact assessment.
+
+[[IAM-094]]
+*IAM-094.* The data of each event type MUST follow its {abbr-json-first} Schema 2020-12, published in `registry/events/<type>.schema.json` as API-103 requires.
+Its field names MUST follow NAM-010, such as `representedPartyId`.
+Its outcome and reason MUST be code list values under NAM-060.
+Each value has labels in English and French under NAM-061.
+Machines then read the events in any language, and people see labels in theirs.
+
+The FPSOT observability specification names the attributes of the record, such as the time and the trace identifier.
+This specification sets only the fields of the event data, and does not define those names.
+
+When a record carries the common fields of IAM-091 as attributes, it MUST use these names.
+One name for each field lets one query find an actor or a session across every product.
+
+[cols="1,2",options="header"]
+|===
+|Field of IAM-091 |Record attribute
+|Actor |`org.fpsot.actor.id`, `org.fpsot.actor.type`, `org.fpsot.actor.role`
+|Client |`org.fpsot.identity.client.id`
+|Session |`org.fpsot.identity.session.id`
+|Level |`org.fpsot.identity.assurance.level`
+|Represented party |`org.fpsot.identity.represented_party.id`
+|`act` chain |`org.fpsot.identity.act_chain.actor_ids`, a list of opaque identifiers
+|Outcome |`org.fpsot.outcome`
+|===
+
+[[IAM-095]]
+*IAM-095.* A `session.ended` event MUST give one of these reasons: `sign-out`, `idle-limit`, `overall-limit`, `assurance-dropped`, `revoked` or `account-suspended`.
+An `authentication.failed` event MUST give one of these reasons: `wrong-credential`, `account-locked`, `level-not-met` or `other`.
+A fixed list of reasons lets operators count and compare failures across services.
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

@@ -1,0 +1,35 @@
+# FPSOT identity and access specification
+
+> How public-sector software signs people in and decides who may do what: three assurance levels with acr URIs and a mapping to Québec, Canada, the PCTF, eIDAS and NIST SP 800-63-4; passkeys and phishing-resistant MFA; OpenID Connect and OAuth 2.0 on RFC 9700, a backend for each browser front end, FAPI 2.0 at the high level; token checks at APIs; sessions and sign-out; authorization over OpenID AuthZEN 1.0 with plain Rego (Rego v1) and exportable relationships; representation and token exchange within one organization; workload identity; SCIM provisioning and federation; identity audit events; RFC 9457 problem types.
+
+## Specification
+
+- [Overview](spec/en/index.adoc): scope, parts, conformance and cited versions.
+- [Assurance levels](spec/en/assurance.adoc): IAM-001 to IAM-004.
+- [Sign-in and authenticators](spec/en/authentication.adoc): IAM-010 to IAM-017.
+- [Sign-in flows and clients](spec/en/clients.adoc): IAM-020 to IAM-028.
+- [Tokens at APIs](spec/en/apis.adoc): IAM-030 to IAM-036.
+- [Sessions and sign-out](spec/en/sessions.adoc): IAM-040 to IAM-044.
+- [Authorization](spec/en/authorization.adoc): IAM-050 to IAM-057.
+- [Representation and delegation](spec/en/representation.adoc): IAM-060 to IAM-065.
+- [Machine and workload identity](spec/en/workloads.adoc): IAM-070 to IAM-074.
+- [Accounts, federation and provisioning](spec/en/accounts.adoc): IAM-080 to IAM-086.
+- [Identity and access events](spec/en/events.adoc): IAM-090 to IAM-095.
+- [Errors](spec/en/errors.adoc): IAM-100 to IAM-103.
+- [Reference stack](spec/en/reference-stack.adoc): informative.
+- [Questions for counsel](spec/en/questions-for-counsel.adoc): informative, not legal advice.
+
+## Data
+
+- [Assurance level mapping](registry/assurance-levels.yaml)
+- [Problem types](registry/problem-types.json)
+- [Event schemas](registry/events/)
+
+## Examples
+
+- [How-to guide: secure a new service](docs/modules/en/pages/index.adoc)
+
+## Optional
+
+- [Agent skill](skill/SKILL.md)
+- [Français](spec/fr/index.adoc)

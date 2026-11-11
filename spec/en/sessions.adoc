@@ -1,0 +1,82 @@
+= Sessions and sign-out
+include::_fpsot-terms.adoc[]
+
+A session lets a person act for a while after one sign-in.
+These rules set how long a session lasts, when it ends and how sign-out reaches every application.
+
+== Time limits
+
+[[IAM-040]]
+*IAM-040.* A session MUST end at the time limits of this table, or sooner.
+The overall limit counts from the sign-in, and the idle limit from the last action of the person.
+A staff session follows the federal link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[guideline on multifactor authentication].
+A session of the public follows link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4].
+An organization MAY set shorter limits.
+
+[cols="2,1,1,1,1",options="header"]
+|===
+|Who |Overall, `low` and `substantial` |Idle, `low` and `substantial` |Overall, `high` |Idle, `high`
+|Staff |12 hours |30 minutes |12 hours |15 minutes
+|Public |24 hours |1 hour |12 hours |15 minutes
+|===
+
+A person at a public counter or on a shared computer needs the shorter limits of staff.
+Longer limits for the public spare people from signing in again on their own devices.
+At the `high` level, a session of the public gets 12 hours overall and 15 minutes idle.
+These are the limits of AAL3 in NIST SP 800-63B-4, the level that `high` maps to under IAM-003.
+
+In Québec, article 36 of the instruction IA-SI-2022-001-OP recommends 8 hours overall and 30 minutes idle.
+Those values are stricter than the limits for the public, and an organization can adopt them under this rule.
+
+[[IAM-041]]
+*IAM-041.* When a session ends, the person MUST sign in again at the level of the service.
+The backend of a browser front end MUST then drop the tokens of the session.
+The authorization server MUST revoke its refresh tokens.
+The application MUST create a new session identifier at each sign-in and at each step-up.
+A session identifier MUST be random, with at least 128 bits of entropy.
+A fixed identifier lets an attacker plant a session before the person signs in.
+
+== Sign-out
+
+[[IAM-042]]
+*IAM-042.* An application MUST offer a sign-out that ends its own session and the session at the {term-identity-provider}.
+It MUST use link:https://openid.net/specs/openid-connect-rpinitiated-1_0.html[OpenID Connect RP-Initiated Logout 1.0] for that.
+The identity provider MUST then tell every other application of the session, with link:https://openid.net/specs/openid-connect-backchannel-1_0.html[OpenID Connect Back-Channel Logout 1.0].
+Each application MUST end its session when it receives that notice.
+An identity provider and its applications SHOULD also exchange session and credential events under link:https://openid.net/specs/openid-caep-1_0-final.html[OpenID Continuous Access Evaluation Profile 1.0].
+A person who signs out on a shared computer expects every service to sign out.
+
+[[IAM-043]]
+*IAM-043.* A session MUST keep the assurance level of the service for its whole life.
+When the level falls below the level of the service, the application MUST end the session.
+It MAY instead require a step-up before the next action.
+The level falls when the person removes the authenticator of the sign-in, or when the account loses its verification.
+This option does not apply where the jurisdiction requires the session to end, as Québec does in article 25.
+
+[[IAM-044]]
+*IAM-044.* A service SHOULD show each person a list of their active sessions.
+The list SHOULD give the device and the time of each sign-in.
+The person SHOULD be able to end any of them.
+People often spot a stolen account first through a session they do not know.
+
+== References
+
+=== Normative
+
+* link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html[Archived copy]
+* link:https://openid.net/specs/openid-connect-rpinitiated-1_0.html[OpenID Connect RP-Initiated Logout 1.0], OpenID Foundation, Final, 2022-09-12. link:https://web.archive.org/web/20261102194245/https://openid.net/specs/openid-connect-rpinitiated-1_0.html[Archived copy]
+* link:https://openid.net/specs/openid-connect-backchannel-1_0.html[OpenID Connect Back-Channel Logout 1.0 incorporating errata set 1], OpenID Foundation, Final, 2023-12-15. Also published as ISO/IEC 26137:2024. link:https://web.archive.org/web/20261024025639/https://openid.net/specs/openid-connect-backchannel-1_0.html[Archived copy]
+
+=== Informative
+
+* Indication d'application IA-SI-2022-001-OP, Niveaux d'assurance de l'identité, Gouvernement du Québec, Chief Government Information Security Officer, 2022-10-04. No archived copy exists. The PDF is at `https://www.cyber.gouv.qc.ca/publications/IA-SI-2022-001-OP_NiveauxAssurIdentite.pdf`.
+* link:https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Government of Canada Guideline on Multi-Factor Authentication: Technical Recommendations for Authenticators to Support MFA Within the GC Enterprise Domain], Treasury Board of Canada Secretariat. link:https://web.archive.org/web/20261003063857/https://www.canada.ca/en/government/system/digital-government/guideline-multi-factor-authentication.html[Archived copy]
+* link:https://openid.net/specs/openid-caep-1_0-final.html[OpenID Continuous Access Evaluation Profile 1.0], OpenID Foundation, Final, 2025-08-29. link:https://web.archive.org/web/20261006112628/https://openid.net/specs/openid-caep-1_0-final.html[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===

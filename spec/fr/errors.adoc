@@ -1,0 +1,94 @@
+= Erreurs
+include::_fpsot-terms.adoc[]
+
+Une erreur d'identité ou d'accès doit dire au client quoi faire ensuite, sans aider une attaque.
+Ces règles complètent le format d'erreur d'API-030 à API-037.
+La {abbr-fpsot-first} tient la liste de ses types de problèmes d'identité et d'accès dans le fichier `registry/problem-types.json`.
+
+== En-tête et corps
+
+[[IAM-100]]
+*IAM-100.* Une {abbr-api-first} qui refuse un jeton DOIT envoyer l'en-tête `WWW-Authenticate` que définit OAuth.
+L'en-tête suit le link:https://www.rfc-editor.org/info/rfc6750[RFC 6750] et le link:https://www.rfc-editor.org/info/rfc9470[RFC 9470], avec le schéma `DPoP` du link:https://www.rfc-editor.org/info/rfc9449[RFC 9449] s'il s'applique.
+Il DEVRAIT porter le paramètre `resource_metadata` du link:https://www.rfc-editor.org/info/rfc9728[RFC 9728].
+La réponse DOIT aussi porter un corps de détails du problème, comme l'exige API-030.
+Le corps NE DOIT PAS remplacer l'en-tête, et NE DOIT PAS le contredire.
+Les clients OAuth lisent l'en-tête, alors que les autres clients et les personnes lisent le corps.
+
+[[IAM-101]]
+*IAM-101.* Un corps de détails du problème DOIT employer un type de ce tableau quand l'un convient.
+Chaque type est une {abbr-uri-first} qui commence par `https://fpsot.org/problems/identity/`, suivie du nom.
+Sa page française se trouve sous `https://fpsot.org/fr/problems/identity/`, selon NAM-034.
+Quand aucun type de ce tableau ne convient, l'{abbr-api} DOIT employer un type partagé d'API-032, comme `forbidden`.
+Les titres en français et en anglais se trouvent dans `registry/problem-types.json`, et API-033 s'y applique.
+
+[cols="3,1,3,4",options="header"]
+|===
+|Nom |Statut |Erreur OAuth |Problème
+|`invalid-token` |401 |`invalid_token` |Le jeton d'accès n'est pas valide pour cette {abbr-api}.
+|`token-expired` |401 |`invalid_token` |Le jeton d'accès a expiré.
+|`token-not-bound` |401 |`invalid_token` |L'opération exige un jeton lié à une clé, selon IAM-026.
+|`invalid-dpop-proof` |401 |`invalid_dpop_proof` |La preuve de possession de la clé n'est pas valide.
+|`dpop-nonce-required` |401 |`use_dpop_nonce` |La preuve de possession doit employer le nonce que le serveur a envoyé.
+|`insufficient-scope` |403 |`insufficient_scope` |Le jeton n'a pas une portée dont l'opération a besoin.
+|`insufficient-user-authentication` |401 |`insufficient_user_authentication` |L'opération exige une connexion plus forte ou plus récente, selon IAM-034.
+|`session-expired` |401 |Aucune |La session de l'application frontale a pris fin, selon IAM-040.
+|`representation-required` |403 |Aucune |La personne doit choisir la partie pour laquelle elle agit, selon IAM-064.
+|`representation-expired` |403 |Aucune |Le droit d'agir pour la partie choisie a pris fin.
+|`authorization-unavailable` |503 |Aucune |Le service ne peut pas joindre le moteur d'autorisation, et refuse donc la requête selon IAM-051.
+|===
+
+Un corps pour `insufficient-user-authentication` DOIT porter les membres `acrValues` et, au besoin, `maxAge`.
+Ils reprennent les valeurs de l'en-tête, avec des noms de champs qui suivent API-037.
+
+[source,http]
+----
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: DPoP algs="ES256 PS256 EdDSA",
+  error="insufficient_user_authentication",
+  acr_values="https://fpsot.org/assurance-levels/high",
+  resource_metadata="https://api.example.org/.well-known/oauth-protected-resource"
+Content-Type: application/problem+json
+Content-Language: fr
+
+{
+  "type": "https://fpsot.org/problems/identity/insufficient-user-authentication",
+  "title": "Une connexion plus forte ou plus récente est nécessaire.",
+  "status": 401,
+  "detail": "Connectez-vous de nouveau avec votre clé de sécurité, puis répétez la requête.",
+  "acrValues": ["https://fpsot.org/assurance-levels/high"]
+}
+----
+
+== Ce que révèle une erreur
+
+[[IAM-102]]
+*IAM-102.* Une erreur NE DOIT PAS dire quelle politique, règle ou relation a mené à un refus.
+Elle NE DOIT PAS révéler si une ressource existe.
+Elle DEVRAIT répondre `404 Not Found` selon API-093 quand l'appelant ne peut pas le savoir.
+Elle NE DOIT PAS dire si un compte existe, ni quel facteur d'une connexion a échoué.
+Le moteur consigne le motif dans l'événement `access.evaluated` d'IAM-092, où l'exploitant peut le lire.
+Les détails d'un refus enseignent à une attaque comment contourner la politique.
+
+[[IAM-103]]
+*IAM-103.* Les points de terminaison d'autorisation et de jeton DOIVENT garder les réponses d'erreur d'link:https://www.rfc-editor.org/info/rfc6749[OAuth 2.0] et d'OpenID Connect.
+Ils NE DOIVENT PAS employer des détails du problème à la place de ces réponses.
+Les clients et les bibliothèques OAuth analysent ces réponses d'erreur, et un autre format les briserait.
+
+== Références
+
+=== Références normatives
+
+* link:https://www.rfc-editor.org/info/rfc6750[RFC 6750, The OAuth 2.0 Authorization Framework: Bearer Token Usage], IETF, 2012-10. link:https://web.archive.org/web/20261027021859/https://www.rfc-editor.org/info/rfc6750/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9470[RFC 9470, OAuth 2.0 Step Up Authentication Challenge Protocol], IETF, 2023-09. link:https://web.archive.org/web/20261022232847/https://www.rfc-editor.org/info/rfc9470/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9449[RFC 9449, OAuth 2.0 Demonstrating Proof of Possession (DPoP)], IETF, 2023-09. link:https://web.archive.org/web/20261103003951/https://www.rfc-editor.org/info/rfc9449/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc9728[RFC 9728, OAuth 2.0 Protected Resource Metadata], IETF, 2025-04. link:https://web.archive.org/web/20261101164937/https://www.rfc-editor.org/info/rfc9728/[Copie archivée]
+* link:https://www.rfc-editor.org/info/rfc6749[RFC 6749, The OAuth 2.0 Authorization Framework], IETF, 2012-10. link:https://web.archive.org/web/20261103170418/https://www.rfc-editor.org/info/rfc6749/[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

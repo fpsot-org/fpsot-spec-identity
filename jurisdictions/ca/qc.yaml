@@ -1,0 +1,58 @@
+code: CA-QC
+name: {en: Québec, fr: Québec}
+rows:
+- id: IAM-001
+  text: {en: 'Every public body must set one of four levels for every service, faible to très élevé, from an assessment of harm to confidentiality, integrity and availability. The assessment is due even for anonymous services.', fr: 'Chaque organisme public doit fixer un de quatre niveaux pour chaque service, de faible à très élevé, à partir d’une évaluation du préjudice à la confidentialité, à l’intégrité et à la disponibilité. L’évaluation est due même pour les services anonymes.'}
+  status: same
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 5', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-011
+  text: {en: Level AU4 requires advanced multifactor authentication with at least one hardware cryptographic device., fr: Le niveau AU4 exige une authentification multifacteur avancée avec au moins un dispositif cryptographique matériel.}
+  status: same
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 10 and annex 3', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-013
+  text: {en: 'A public body must offer a choice of authentication factors, and extra devices to replace a lost or failed primary device for multifactor authentication.', fr: 'Un organisme public doit offrir un choix de facteurs d’authentification, et des dispositifs supplémentaires pour pallier la perte ou la défaillance du dispositif principal.'}
+  status: same
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 11', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-017
+  text: {en: 'A public body must let account holders learn of a suspected unauthorized access, with a fast response that blocks the access and invalidates related actions.', fr: 'Un organisme public doit permettre de signaler au titulaire un accès non autorisé soupçonné, avec une réponse rapide qui bloque l’accès et invalide les actions liées.'}
+  status: same
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 24', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-043
+  text: {en: 'The level must hold for the whole session. When it falls below the required level, for any reason, the session must be interrupted.', fr: 'Le niveau doit être maintenu tout au long de la session. S’il tombe sous le niveau requis, pour quelque raison que ce soit, la session doit être interrompue.'}
+  status: stricter
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 25', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-060
+  text: {en: 'Under the principle of uniqueness, a person holds one account for themselves in each identification system, and cannot share it with another person.', fr: 'Selon le principe d’unicité, une personne détient un seul compte pour elle-même par système d’identification, sans pouvoir le partager avec une autre personne.'}
+  status: same
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 4', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-061
+  text: {en: 'A person represented by another must have that person prove their capacity to act. A business proves its existence through the enterprise register, with a document on its representative. The rules set no scope or end date for the representation.', fr: 'Une personne représentée par une autre exige une preuve de la capacité d’agir de celle-ci. Une entreprise prouve son existence par le registre des entreprises, avec un document sur son représentant. Les règles ne fixent ni portée ni date de fin pour la représentation.'}
+  status: looser
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, arts. 13 to 16', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-070
+  text: {en: 'The rules apply, with the necessary adaptations, to machine identities, which are keys and certificates between information assets.', fr: 'Les règles s’appliquent, avec les adaptations nécessaires, aux identités machine, soit les clés et les certificats entre actifs informationnels.'}
+  status: looser
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 29', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-082
+  text: {en: 'The entity that identifies or authenticates people must keep a register of each account, its attribution, suspension, recovery, maintenance, revocation and renewal. The register is kept current and reviewed every year.', fr: 'L’entité qui identifie ou authentifie les personnes doit tenir un registre de chaque compte, de son attribution, de sa suspension, de sa récupération, de sa maintenance, de sa révocation et de son renouvellement. Le registre est tenu à jour et revu chaque année.'}
+  status: same
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 27', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-083
+  text: {en: 'Identity evidence must be renewed at most every 36 months at ID2, 18 months at ID3 and 12 months at ID4, or the person is identified again. ID3 maps to the FPSOT level substantial, where FPSOT sets 36 months.', fr: 'Les preuves d’identité doivent être renouvelées au plus tous les 36 mois au niveau ID2, 18 mois au niveau ID3 et 12 mois au niveau ID4, sinon la personne est identifiée de nouveau. Le niveau ID3 correspond au niveau FPSOT substantiel, où la FPSOT fixe 36 mois.'}
+  status: stricter
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 26', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"
+- id: IAM-085
+  text: {en: 'Before a federation agreement, a public body must run a risk analysis with a privacy impact assessment. The agreement must impose the rules and levels, never lower ones, and cannot release the body from liability.', fr: 'Avant une entente de fédération, un organisme public doit faire une analyse de risques avec une évaluation des facteurs relatifs à la vie privée. L’entente doit imposer les règles et les niveaux, jamais inférieurs, et ne peut exonérer l’organisme de sa responsabilité.'}
+  status: same
+  source: {title: 'Gouvernement du Québec, Règles relatives à l''assurance de l''identité numérique, annexe de l''arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique, Gazette officielle du Québec, Partie 2, art. 23', version: A.M. 2024-03, date: '2024-07-17', url: 'https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf', archive: 'https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf'}
+  last_checked: "2026-11-10"

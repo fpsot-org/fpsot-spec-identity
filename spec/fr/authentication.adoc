@@ -1,0 +1,105 @@
+= Connexion et authentifiants
+include::_fpsot-terms.adoc[]
+
+Ces règles fixent les authentifiants qu'une personne peut employer à chaque niveau d'assurance.
+Elles couvrent aussi les authentifiants de secours, la récupération d'un compte et une compromission soupçonnée.
+Le protocole de la connexion figure sur la page xref:clients.adoc[Flux de connexion et clients].
+
+== Authentification multifacteur
+
+[[IAM-010]]
+*IAM-010.* Un service de niveau `substantial` ou `high` DOIT exiger l'authentification multifacteur.
+Le {term-identity-provider} DOIT offrir à chaque personne au moins un authentifiant résistant à l'hameçonnage, comme une clé d'accès.
+Un authentifiant résistant à l'hameçonnage prouve qu'il détient une clé liée au vrai site.
+link:https://www.w3.org/TR/webauthn-3/[Web Authentication Level 3] fonctionne ainsi.
+Un code que la personne tape ne résiste jamais à l'hameçonnage, quel que soit le canal.
+Les authentifiants résistants à l'hameçonnage bloquent les attaques de l'intercepteur qui déjouent les codes.
+
+[[IAM-011]]
+*IAM-011.* Au niveau `high`, un facteur DOIT être une clé matérielle liée à l'appareil, que personne ne peut exporter.
+Le fournisseur d'identité DOIT refuser une clé d'accès synchronisée à ce niveau.
+Avec Web Authentication, il DOIT vérifier que l'indicateur d'admissibilité à la sauvegarde du justificatif n'est pas activé.
+Une clé d'accès synchronisée PEUT servir de facteur résistant à l'hameçonnage aux niveaux `low` et `substantial` pour le public.
+Une clé synchronisée réside dans un compte infonuagique, et sa sûreté dépend donc de ce compte.
+
+L'authentifiant fixe lui-même cet indicateur, et l'indicateur seul ne prouve donc rien.
+Au niveau `high`, le fournisseur d'identité DOIT aussi vérifier l'attestation de chaque nouvel authentifiant.
+Il DOIT la comparer à une source de métadonnées fiable, ou à une liste de clés remises par l'organisation.
+Le link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4] exige qu'un fournisseur connaisse les caractéristiques de chaque authentifiant qu'il associe, par exemple par une attestation.
+
+[[IAM-012]]
+*IAM-012.* Le personnel DOIT se connecter avec une authentification multifacteur résistante à l'hameçonnage.
+Les responsables de l'administration du fournisseur d'identité, du {term-authorization-engine} et de leurs clés DOIVENT employer le niveau `high`.
+Une organisation PEUT refuser les clés d'accès synchronisées à son personnel, à tous les niveaux.
+Les comptes du personnel atteignent de nombreux dossiers à la fois, et les attaques les visent en premier.
+
+[[IAM-013]]
+*IAM-013.* Le fournisseur d'identité DOIT laisser chaque personne choisir entre au moins deux sortes d'authentifiants à chaque niveau.
+Il DOIT laisser chaque personne inscrire un authentifiant de secours du même niveau, avant d'en avoir besoin.
+Sans cela, une personne qui perd son seul authentifiant perdrait l'accès, ou passerait par une récupération faible.
+Les règles du Québec exigent ce choix et ces dispositifs de secours.
+
+== Authentifiants faibles
+
+[[IAM-014]]
+*IAM-014.* Un mot de passe DOIT suivre les règles sur les mots de passe du link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4].
+Un mot de passe DOIT compter au moins 15 caractères s'il est le seul facteur, et 8 sinon.
+Le fournisseur d'identité DOIT accepter au moins 64 caractères et le collage depuis un gestionnaire de mots de passe.
+Il DOIT comparer chaque nouveau mot de passe à une liste de mots de passe divulgués et courants.
+Il NE DOIT PAS imposer de règles de composition ni de changement périodique, ni employer de questions secrètes ou d'indices.
+Les changements forcés et les règles de composition mènent à des mots de passe plus faibles et prévisibles.
+
+Le fournisseur DOIT conserver chaque mot de passe salé et haché, selon la section 3.1.1.2.
+Il DOIT permettre au plus 100 échecs de suite sur un même compte, selon la section 3.2.2.
+Le hachage salé ralentit une attaque qui vole la base, et la limite bloque les essais en ligne.
+
+[[IAM-015]]
+*IAM-015.* Un code transmis par SMS ou par appel vocal NE DEVRAIT PAS servir de facteur.
+Il PEUT servir de solution de repli que la personne choisit.
+Il NE DOIT PAS servir de facteur au niveau `high`.
+Le courriel NE DOIT PAS servir d'authentifiant, à aucun niveau.
+Une approbation par notification DOIT afficher un nombre à faire correspondre, sinon elle NE DOIT PAS servir de facteur.
+Les attaques détournent des numéros de téléphone et des boîtes de courriel, et les gens approuvent les notifications par habitude.
+
+== Récupération et compromission
+
+[[IAM-016]]
+*IAM-016.* La récupération d'un compte NE DOIT PAS donner un accès d'un niveau supérieur à la preuve qu'elle a vérifiée.
+Pour retrouver le niveau `substantial` ou `high`, une personne DOIT employer un authentifiant de secours de ce niveau.
+La personne PEUT plutôt repasser la vérification de l'identité.
+Chaque récupération DOIT envoyer un avis à la personne, par un moyen de contact qu'elle a confirmé plus tôt.
+Les attaques passent par une récupération faible pour contourner une connexion forte.
+
+[[IAM-017]]
+*IAM-017.* Un service DOIT permettre à une personne de signaler un usage abusif soupçonné de son compte.
+Il DOIT aviser la personne quand il en détecte un.
+Devant une compromission soupçonnée, le fournisseur d'identité DOIT bloquer le compte immédiatement.
+Il DOIT mettre fin à ses sessions et révoquer ses jetons d'actualisation, selon IAM-041.
+Le service DOIT ensuite revoir les actions du compte depuis le début soupçonné, et annuler celles dont il doute.
+Les règles du Québec exigent cet avis, un blocage rapide et l'annulation des actions liées.
+
+== Pages de connexion
+
+Les pages de connexion, d'inscription et de récupération suivent la spécification FPSOT sur l'accessibilité, ACC-001.
+Cette base comprend le critère de succès des link:https://www.w3.org/TR/WCAG22/[WCAG 2.2] sur l'authentification accessible.
+Elles offrent le français et l'anglais selon LOC-003, et choisissent la langue selon LOC-005.
+Leurs messages suivent WRT-040.
+
+== Références
+
+=== Références normatives
+
+* link:https://www.w3.org/TR/webauthn-3/[Web Authentication: An API for accessing Public Key Credentials, Level 3], W3C, Recommendation, 2026-08-25. link:https://web.archive.org/web/20261027065855/https://www.w3.org/TR/webauthn-3/[Copie archivée]
+* link:https://pages.nist.gov/800-63-4/sp800-63b.html[NIST SP 800-63B-4, Digital Identity Guidelines: Authentication and Authenticator Management], NIST, revision 4, 2025-07. link:https://web.archive.org/web/20261102050741/https://pages.nist.gov/800-63-4/sp800-63b.html[Copie archivée]
+
+=== Références informatives
+
+* link:https://www.w3.org/TR/WCAG22/[Web Content Accessibility Guidelines (WCAG) 2.2], W3C, Recommendation, 2024-12-12. link:https://web.archive.org/web/20261108183355/https://www.w3.org/TR/WCAG22/[Copie archivée]
+
+== Historique du document
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Changement
+|0.1.0 |2026-11-10 |Première version.
+|===

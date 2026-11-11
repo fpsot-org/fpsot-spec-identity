@@ -1,0 +1,79 @@
+= Representation and delegation
+include::_fpsot-terms.adoc[]
+
+People often act for someone else, such as a parent for a child or an employee for a business.
+These rules set how a service knows who acts, for whom, and within which limits.
+In Québec, articles 13 to 16 of the link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[rules on digital identity] require a proof of capacity here.
+
+No shared Canadian service supports representation yet.
+A link:https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services[news report], which is a secondary source, covers the federal sign-in service, CanadaLogin.
+It says that the service plans delegation only after its current funding ends, in early 2028.
+This page fills that gap with a model that any service can adopt now.
+
+== People act as themselves
+
+[[IAM-060]]
+*IAM-060.* Each person MUST sign in with their own account, and an account MUST belong to one person only.
+A service MUST NOT offer a shared account, even for a business or a team.
+A business or a public body acts only through the people who represent it.
+The Québec rules state the same principle of one account per person.
+A shared account hides who did what, and the audit trail loses its value.
+
+== Relationships of representation
+
+[[IAM-061]]
+*IAM-061.* Each representation MUST be a relationship in the {term-authorization-engine}, from the representative to the represented party.
+It MUST state its kind, such as guardian or mandatary, with its scope, its start and its end.
+It MUST hold a reference to the proof of capacity, such as a court decision or a mandate.
+For a business, the proof MAY be an entry in the Québec enterprise register.
+It MUST also record who checked that proof, and when.
+A token claim cannot follow a scope or an end date that changes after the sign-in.
+
+[[IAM-062]]
+*IAM-062.* The represented party MUST be a `Party` under DMO-040, a person or an organization.
+The service SHOULD keep each representation as a `PartyRelationship` under DMO-044, with its period.
+It SHOULD derive the relationships of the engine from those records.
+One record of the business fact then feeds both the case files and the access decisions.
+
+[[IAM-063]]
+*IAM-063.* The service checks the capacity of the representative of a business.
+That representative MUST be able to grant other people access to the account of the business, and to revoke it.
+A grant MUST NOT exceed the scope of the person who gives it.
+Each grant MUST be its own relationship under IAM-061, with a reference to the representative who made it.
+The Québec rules make that representative responsible for the access to the account of the business.
+
+[[IAM-064]]
+*IAM-064.* A person who represents someone else MUST choose, in the session, the party they act for.
+The service MUST show that choice on every page.
+Each request MUST pass the represented party to the engine, in the subject properties or the context of the evaluation.
+The engine MUST deny when no valid relationship covers the action.
+A visible choice prevents a person from acting for the wrong child or the wrong business by mistake.
+
+== Token exchange
+
+[[IAM-065]]
+*IAM-065.* Within one organization, a service MAY exchange the token of a person for a new token.
+The new token MUST follow link:https://www.rfc-editor.org/info/rfc8693[RFC 8693], with a narrower audience and a subset of the scopes.
+Its `sub` claim MUST name the person, and its `act` claim MUST name the service that acts.
+A token obtained by token exchange MUST carry that `act` claim, so that it never impersonates the person.
+A token exchange that crosses from one organization to another MUST NOT happen in this version.
+Whether user context may cross between public bodies is a legal question, listed on the page xref:questions-for-counsel.adoc[Questions for counsel].
+
+== References
+
+=== Normative
+
+* link:https://www.rfc-editor.org/info/rfc8693[RFC 8693, OAuth 2.0 Token Exchange], IETF, 2020-01. link:https://web.archive.org/web/20261101164937/https://www.rfc-editor.org/info/rfc8693/[Archived copy]
+
+=== Informative
+
+* link:https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services[Canada begins gradual rollout of SSO for digital government services], Biometric Update, secondary source, 2026-10-01. link:https://web.archive.org/web/20261002033142/https://www.biometricupdate.com/202610/canada-begins-gradual-rollout-of-sso-for-digital-government-services[Archived copy]
+* link:https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Règles relatives à l'assurance de l'identité numérique, annexe de l'arrêté numéro 2024-03 du ministre de la Cybersécurité et du Numérique], Gouvernement du Québec, Gazette officielle du Québec, Partie 2, 2024-07-17. link:https://web.archive.org/web/20260219124106/https://www.publicationsduquebec.gouv.qc.ca/fileadmin/gazette/pdf_encrypte/lois_reglements/2024F/83715.pdf[Archived copy]
+
+== Document history
+
+[cols="1,1,4",options="header"]
+|===
+|Version |Date |Change
+|0.1.0 |2026-11-10 |First version.
+|===
