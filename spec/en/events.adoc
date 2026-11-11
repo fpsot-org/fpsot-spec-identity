@@ -69,7 +69,7 @@ Audit records outlive the sessions they describe, so each secret or personal det
 For security review, three identity events need the full network address of the client.
 They are `authentication.failed`, `authentication.succeeded` and `account.suspended`.
 This list is an input to the minimization rules of the observability specification.
-They keep the full address only when the privacy impact assessment names them.
+They keep the full address only when they appear in the privacy impact assessment.
 
 [[IAM-094]]
 *IAM-094.* The data of each event type MUST follow its {abbr-json-first} Schema 2020-12, published in `registry/events/<type>.schema.json` as API-103 requires.

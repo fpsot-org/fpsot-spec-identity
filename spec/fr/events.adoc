@@ -69,7 +69,7 @@ Les enregistrements d'audit survivent aux sessions qu'ils décrivent, et chaque 
 Pour la revue de sécurité, trois événements d'identité ont besoin de l'adresse réseau complète du client.
 Ce sont `authentication.failed`, `authentication.succeeded` et `account.suspended`.
 Cette liste alimente les règles de minimisation de la spécification sur l'observabilité.
-Ces événements gardent l'adresse complète seulement si l'évaluation des facteurs relatifs à la vie privée les nomme.
+Ces événements gardent l'adresse complète seulement s'ils figurent dans l'évaluation des facteurs relatifs à la vie privée.
 
 [[IAM-094]]
 *IAM-094.* Les données de chaque type d'événement DOIVENT suivre leur schéma {abbr-json-first} Schema 2020-12, publié dans `registry/events/<type>.schema.json` comme l'exige API-103.
